@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/tomforsmo/Glimt-i-Europa/refs/heads/main/favicon.ico">
+  <title>Glimt i Europa</title>
+  <style>
+    /* --- GLIMT GUL & SVART STYLING --- */
+    :root {
+      --glimt-gul: #FFD700;
+      --glimt-svart: #121212;
+      --mork-gra: #1e1e1e;
+      --lys-tekst: #f5f5f5;
+      --dempet-tekst: #aaaaaa;
+      --suksess-gronn: #28a745;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--glimt-svart);
+      color: var(--lys-tekst);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('https://i.imgur.com/G2P0kC3.jpeg');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    header {
+      background-color: var(--mork-gra);
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 3px solid var(--glimt-gul);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--glimt-gul);
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* --- HAMBURGERMENY STYLING --- */
+    .hamburger { 
+      position: absolute; 
+      right: 20px; 
+      cursor: pointer; 
+      padding: 5px;
+    }
+    .bar { 
+      width: 25px; 
+      height: 3px; 
+      background-color: var(--glimt-gul); 
+      margin: 5px 0; 
+    }
+    .nav-meny { 
+      display: none; 
+      position: absolute; 
+      top: 75px; 
+      right: 20px; 
+      background: var(--mork-gra); 
+      border: 1px solid var(--glimt-gul); 
+      border-radius: 8px; 
+      padding: 10px; 
+      flex-direction: column; 
+      z-index: 10000; 
+      min-width: 160px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .nav-meny a { 
+      color: white; 
+      text-decoration: none; 
+      padding: 12px; 
+      border-bottom: 1px solid #333;
+      font-weight: bold;
+    }
+    .nav-meny a:hover { 
+      color: var(--glimt-gul); 
+    }
+
+    main {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* --- AUTH & KORT STYLING --- */
+    .auth-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 30px;
+      gap: 20px;
+    }
+
+    .auth-kort, .avdelings-kort {
+      background: rgba(26, 30, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border: 1px solid #2a2a2a;
+    }
+
+    h2, h3, h4 {
+      margin-top: 0;
+      color: var(--glimt-gul);
+    }
+
+    .auth-undertittel, .hjelpetekst {
+      color: var(--dempet-tekst);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .input-felt-gruppe {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-felt-gruppe label {
+      margin-bottom: 5px;
+      font-size: 0.85rem;
+      color: var(--glimt-gul);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      background-color: #111;
+      border: 1px solid #444;
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--glimt-gul);
+    }
+
+    /* --- KNAPPER --- */
+    .knapp {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 10px;
+    }
+
+    .knapp:active {
+      transform: scale(0.98);
+    }
+
+    .knapp-primær {
+      background-color: var(--glimt-gul);
+      color: black;
+    }
+
+    .knapp-primær:hover {
+      background-color: #e6c200;
+    }
+
+    .knapp-suksess {
+      background-color: var(--suksess-gronn);
+      color: white;
+    }
+
+    .knapp-suksess:hover {
+      background-color: #218838;
+    }
+
+    .auth-veksle {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--dempet-tekst);
+    }
+
+    .auth-veksle a {
+      color: var(--glimt-gul);
+      text-decoration: none;
+    }
+
+    /* --- AVDELING SEKSJON --- */
+    .delelinje {
+      border: 0;
+      height: 1px;
+      margin: 20px 0;
+      background: rgba(26, 30, 42, 0.8);
+    }
+
+    .valg-boks {
+      background: #181818;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--glimt-gul);
+    }
+
+    .input-gruppe {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .input-gruppe input {
+      flex: 1;
+    }
+
+    .input-gruppe .knapp {
+      width: auto;
+      margin-top: 0;
+    }
+
+    .kode-viser {
+      background-color: #111;
+      border: 2px dashed var(--glimt-gul);
+      color: var(--glimt-gul);
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+      letter-spacing: 3px;
+      margin: 15px 0;
+    }
+
+    /* --- DRAG & DROP STYLING --- */
+    .drag-liste {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .drag-element {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 10px 15px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drag-element.dragging {
+      opacity: 0.4;
+      border: 1px dashed var(--glimt-gul);
+    }
+
+    .drag-plassering {
+      background-color: #111;
+      color: var(--glimt-gul);
+      font-weight: bold;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-right: 15px;
+      font-size: 0.9rem;
+      border: 1px solid #333;
+    }
+
+    /* --- KAMP-TIPS --- */
+    .kamp-kort { background-color: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; }
+    
+    .kamp-header {
+        font-size: 0.8rem;
+        background: rgba(26, 30, 42, 0.8);
+        border-bottom: 1px solid #2d3446;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+    }
+
+    .kamp-innhold {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        font-weight: bold;
+    }
+
+    .kamp-innhold input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        background: rgba(26, 30, 42, 0.8);
+        border: 1px solid #333;
+        color: #ffcc00;
+        font-size: 1.5rem;
+        border-radius: 6px;
+    }
+
+    .leaderboard-tabell {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: rgba(26, 30, 42, 0.8);
+    }
+
+    .leaderboard-tabell th {
+      background: rgba(26, 30, 42, 0.78);
+      color: var(--glimt-gul);
+      text-align: left;
+      padding: 15px 10px;
+      font-size: 0.9rem;
+      border-bottom: 2px solid #2d3446;
+    }
+
+    .leaderboard-tabell td {
+        padding: 15px 10px;
+        color: #ffffff;
+        border-bottom: 1px solid #2d3446;
+        cursor: pointer; 
+        transition: background-color 0.2s ease;
+    }
+
+    .leaderboard-tabell tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .leaderboard-tabell tr td:first-child { color: var(--glimt-gul); font-weight: bold; } 
+    .totalt-poeng { color: var(--glimt-gul); font-weight: bold; }
+
+    .runde-svelger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Glimt i Europa</h1>
+    
+    <div class="hamburger" onclick="toggleMeny()">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    
+    <nav id="nav-meny" class="nav-meny">
+      <a href="#" onclick="visLeaderboard('total'); toggleMeny();">Leaderboard</a>
+      <a href="#" onclick="visKampSeksjon(); toggleMeny();">Kamptips</a>
+      <a href="#" onclick="visTabellSeksjon(); toggleMeny();">Tabelltips</a>
+      <a href="#" onclick="visOmSeksjon(); toggleMeny();">Om spillet & Poeng</a>
+      <a href="#" id="logg-ut-knapp" style="display: none;" onclick="handterLoggUt(); toggleMeny();">Logg ut</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <div id="auth-container" class="auth-wrapper" style="display: none;">
+      <div id="login-skjema" class="auth-kort">
+        <h2>Velkommen til Glimt i Europa</h2>
+        <p class="auth-undertittel">Logg inn for å tippe</p>
+        <div class="input-felt-gruppe">
+          <label for="login-epost">E-post</label>
+          <input type="email" id="login-epost" placeholder="navn@epost.no">
+        </div>
+        <div class="input-felt-gruppe">
+          <label for="login-passord">Passord</label>
+          <input type="password" id="login-passord" placeholder="******">
+        </div>
+        <button onclick="handterInnlogging()" class="knapp knapp-primær">Logg inn</button>
+        <p style="text-align: center; margin-top: 10px;">
+          <a href="#" onclick="glemtPassord(event)" style="color: var(--lys-tekst); font-size: 14px;">Glemt passord?</a>
+        </p>
+        <p class="auth-veksle">Ny spiller? <a href="#" onclick="byttTilRegistrering()">Opprett en konto her</a></p>
+      </div>
+
+      <div id="registrer-skjema" class="auth-kort" style="display: none;">
+        <h2>Opprett Spillerprofil</h2>
+        <p class="auth-undertittel">Velg et tøft kallenavn og start tippingen</p>
+        <div class="input-felt-gruppe">
+          <label for="reg-brukernavn">Kallenavn</label>
+          <input type="text" id="reg-brukernavn" placeholder="F.eks. SuperBodø">
+        </div>
+        <div class="input-felt-gruppe">
+          <label for="reg-epost">E-post</label>
+          <input type="email" id="reg-epost" placeholder="navn@epost.no">
+        </div>
+        <div class="input-felt-gruppe">
+          <label for="reg-passord">Passord</label>
+          <input type="password" id="reg-passord" placeholder="Velg et passord">
+        </div>
+        <button onclick="handterRegistrering()" class="knapp knapp-suksess">Opprett min profil</button>
+        <p class="auth-veksle">Har du allerede konto? <a href="#" onclick="byttTilInnlogging()">Logg inn her</a></p>
+      </div>
+
+      <!-- OM SPILLET SEKSJON (PLASSERT UNDER INNLOGGING) -->
+      <div id="auth-om-seksjon" class="auth-kort">
+        <h2>Om Glimt i Europa</h2>
+        <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
+          Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.
+        </p>
+        <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5; margin-bottom: 20px;">
+          Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!
+        </p>
+
+        <h3 style="font-size: 1.1rem; margin-top: 15px;">Slik beregnes poengene</h3>
+        <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Kamptips (enkeltkamper)</p>
+        <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+          <li><strong style="color: var(--lys-tekst);">Riktig kampresultat (H/U/B):</strong> 2 poeng</li>
+          <li><strong style="color: var(--lys-tekst);">Riktig antall mål for hjemmelag:</strong> 1 poeng</li>
+          <li><strong style="color: var(--lys-tekst);">Riktig antall mål for bortelag:</strong> 1 poeng</li>
+        </ul>
+        <p class="hjelpetekst" style="margin-bottom: 15px; font-size: 0.85rem;">Maksimalt 4 poeng per kamp.</p>
+
+        <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Poengfordeling - Tabelltips (36 lag)</p>
+        <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+          <li><strong style="color: var(--lys-tekst);">Nøyaktig riktig plassering:</strong> 4 poeng</li>
+          <li><strong style="color: var(--lys-tekst);">Riktig intervall (f.eks. topp 8, 9-16 osv.):</strong> 2 poeng</li>
+          <li><strong style="color: var(--lys-tekst);">Bonus for å treffe 1. plass og 36. plass nøyaktig:</strong> +5 poeng</li>
+        </ul>
+
+        <h3 style="font-size: 1.1rem; margin-top: 20px;">Frister</h3>
+        <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+          <li><strong style="color: var(--lys-tekst);">Tabelltips:</strong> Fristen er satt til 8. september – da starter Champions League.</li>
+          <li><strong style="color: var(--lys-tekst);">Kamptips:</strong> Fristen for å registrere eller endre tips er ved kampstart (kampene låses automatisk når avspark går).</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div id="spill-seksjon" style="display: none; margin-top: 20px;">
+      
+      <div id="avdelings-seksjon">
+        <div id="avdelings-oppsett" class="avdelings-kort" style="display: none;">
+          <h3>Bli med i eller opprett en avdeling</h3>
+          <p class="hjelpetekst">Du må være tilknyttet en avdeling for å kunne sammenligne poengene dine.</p>
+          <div class="valg-boks">
+            <h4>Bli med i en avdeling</h4>
+            <div class="input-gruppe">
+              <input type="text" id="invitasjonskode-felt" placeholder="F.eks. BERG-1916">
+              <button onclick="bliMedIAvdeling()" class="knapp knapp-suksess">Bli med</button>
+            </div>
+          </div>
+          <hr class="delelinje">
+          <div class="valg-boks">
+            <h4>Opprett ny avdeling</h4>
+            <div class="input-gruppe">
+              <input type="text" id="ny-avdeling-navn" placeholder="F.eks. Markedsavdelingen">
+              <button onclick="opprettAvdeling()" class="knapp knapp-primær">Opprett</button>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 20px;">
+            <a href="#" onclick="hoppOverAvdeling()" style="color: var(--dempet-tekst); text-decoration: none; font-size: 0.9rem;">⏩ Hopp over dette steget</a>
+          </div>
+        </div>
+
+        <div id="avdelings-status" class="avdelings-kort" style="display: none; padding: 15px;">
+          <div onclick="veksleAvdelingsInfo()" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <h3 style="margin: 0; font-size: 1.1rem;">Liga: <span id="vis-avdelingsnavn" style="color: var(--glimt-gul);">-</span></h3>
+            <span id="trekkspill-pil">▼ Vis info & del</span>
+          </div>
+          <div id="avdelings-detaljer" style="display: none; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
+            <div class="kode-viser" id="vis-invitasjonskode">-</div>
+            <div style="display: flex; gap: 10px;">
+              <button onclick="kopierInvitasjonskode()" class="knapp knapp-primær" style="flex: 1; margin: 0; padding: 10px;">📋 Kopier</button>
+              <button onclick="sendEpostInvitasjon()" class="knapp knapp-suksess" style="flex: 1; margin: 0; padding: 10px;">✉️ E-post</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="seksjon-tabell-tips" style="display: none;">
+        <div class="avdelings-kort">
+          <h3>Tipp tabellen for Europa</h3>
+          <p class="hjelpetekst">Hold og dra i lagene for å flytte dem opp og ned i din tabell.</p>
+          <div id="lag-tippe-liste" class="drag-liste">
+            <p style="text-align: center; color: var(--dempet-tekst);">Laster lag...</p>
+          </div>
+          <button onclick="lagreAlleTips()" class="knapp knapp-suksess" style="margin-top: 20px;">💾 Lagre tabelltips</button>
+        </div>
+      </div>
+
+      <div id="seksjon-kamp-tips" style="display: none;">
+        <div class="avdelings-kort">
+          <h3>Tipp kampresultater</h3>
+          <p class="hjelpetekst">Sveip eller klikk deg gjennom de 8 rundene for å tippe enkeltkamper.</p>
+
+          <div class="runde-svelger">
+            <button id="forrige-runde-btn" class="runde-svelger-knapp" onclick="forrigeRunde()">◀</button>
+            <div class="runde-tittel" id="vis-aktiv-runde">Runde 1 av 8</div>
+            <button id="neste-runde-btn" class="runde-svelger-knapp" onclick="nesteRunde()">▶</button>
+          </div>
+          
+          <div id="kamp-tippe-liste"></div>
+        </div>
+        <button onclick="window.lagreRundensKamptips()" class="knapp knapp-suksess" style="margin-top: 20px;">💾 Lagre kamptips</button>      
+      </div>
+
+      <div id="seksjon-leaderboard" style="display: none;">
+        <div class="avdelings-kort">
+            <h2 style="color: var(--glimt-gul);">Glimt i Europa - Tabell</h2>
+            <table class="leaderboard-tabell" style="width: 100%; color: white; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #2d3446;">
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">NAVN</th>
+                        <th style="padding: 10px; text-align: left;">KAMP P</th>
+                        <th style="padding: 10px; text-align: left;">GRUPPE P</th>
+                        <th style="padding: 10px; text-align: left;">TOTALT</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-liste">
+                </tbody>
+            </table>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+              <button onclick="window.visLeaderboard('total')" class="knapp knapp-primær" style="flex: 1;">Universell tabell</button>
+              <button onclick="window.visLeaderboard('avdeling')" class="knapp knapp-primær" style="flex: 1;">
+                  <span id="knapp-avdelingsnavn">Min Liga</span>
+              </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- OM SPILLET SEKSJON (INNE I MENYEN) -->
+      <div id="seksjon-om" style="display: none;">
+        <div class="avdelings-kort">
+          <h2>Om Glimt i Europa</h2>
+          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.</p>
+          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!</p>
+          
+          <h3 style="margin-top: 20px; color: var(--glimt-gul);">Slik beregnes poengene</h3>
+          <p class="hjelpetekst" style="color: var(--glimt-gul); margin-bottom: 5px;">Kamptips (enkeltkamper)</p>
+          <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+            <li><strong style="color: var(--lys-tekst);">Riktig kampresultat (H/U/B):</strong> 2 poeng</li>
+            <li><strong style="color: var(--lys-tekst);">Riktig antall mål for hjemmelag:</strong> 1 poeng</li>
+            <li><strong style="color: var(--lys-tekst);">Riktig antall mål for bortelag:</strong> 1 poeng</li>
+          </ul>
+
+          <p class="hjelpetekst" style="color: var(--glimt-gul); margin-bottom: 5px; margin-top: 15px;">Poengfordeling - Tabelltips (36 lag)</p>
+          <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+            <li><strong style="color: var(--lys-tekst);">Nøyaktig riktig plassering:</strong> 4 poeng</li>
+            <li><strong style="color: var(--lys-tekst);">Riktig intervall (f.eks. topp 8, 9-16 osv.):</strong> 2 poeng</li>
+            <li><strong style="color: var(--lys-tekst);">Bonus for å treffe 1. plass og 36. plass nøyaktig:</strong> +5 poeng</li>
+          </ul>
+
+          <h3 style="margin-top: 20px; color: var(--glimt-gul);">Frister</h3>
+          <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
+            <li><strong style="color: var(--lys-tekst);">Tabelltips:</strong> Fristen er satt til 8. september – da starter Champions League.</li>
+            <li><strong style="color: var(--lys-tekst);">Kamptips:</strong> Fristen for å registrere eller endre tips er ved kampstart (kampene låses automatisk når avspark går).</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="tips-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; overflow-y:auto; padding:20px;">
+    <div style="max-width: 600px; margin: 50px auto; background: #1a1e2a; color: white; padding: 20px; border-radius: 8px; position: relative;">
+        <span onclick="document.getElementById('tips-modal').style.display='none'" style="cursor:pointer; float:right; font-size:24px;">&times;</span>
+        <h2 id="tips-tittel">TIPSENE TIL: </h2>
+        <div id="tips-innhold"></div>
+    </div>
+  </div>
+
+  <script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const SUPABASE_URL = 'https://ymtwkjgennzkidzsqcne.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltdHdramdlbm56a2lkenNxY25lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwODU5MzEsImV4cCI6MjA5OTY2MTkzMX0.R4notoLLUtXmmDMREx_J3J4BpZSAfrlg-cjMieXOrzM';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  window.toggleMeny = function() {
+    const meny = document.getElementById('nav-meny');
+    meny.style.display = (meny.style.display === 'flex') ? 'none' : 'flex';
+  };
+
+  document.querySelectorAll('.nav-meny a').forEach(item => {
+    item.addEventListener('click', () => { document.getElementById('nav-meny').style.display = 'none'; });
+  });
+
+  let aktivRunde = 1;
+
+  window.visTabellSeksjon = function() {
+    document.getElementById('seksjon-tabell-tips').style.display = 'block';
+    document.getElementById('seksjon-kamp-tips').style.display = 'none';
+    document.getElementById('seksjon-leaderboard').style.display = 'none';
+    document.getElementById('seksjon-om').style.display = 'none';
+  }
+
+  window.visKampSeksjon = function() {
+    document.getElementById('seksjon-tabell-tips').style.display = 'none';
+    document.getElementById('seksjon-kamp-tips').style.display = 'block';
+    document.getElementById('seksjon-leaderboard').style.display = 'none';
+    document.getElementById('seksjon-om').style.display = 'none';
+    
+    lastInnKamperForRunde();
+  }
+
+  window.visOmSeksjon = function() {
+    document.getElementById('seksjon-tabell-tips').style.display = 'none';
+    document.getElementById('seksjon-kamp-tips').style.display = 'none';
+    document.getElementById('seksjon-leaderboard').style.display = 'none';
+    document.getElementById('seksjon-om').style.display = 'block';
+  }
+
+  function genererInvitasjonskode() {
+    const glimtProfiler = ["GLIMT", "BERG", "HAUGE", "EVJEN", "SALTNES", "BJORKAN", "HAIKIN", "HOGH", "GUNDERSEN", "SJOVOLD"];
+    const tilfeldigProfil = glimtProfiler[Math.floor(Math.random() * glimtProfiler.length)];
+    const tilfeldigTall = Math.floor(1000 + Math.random() * 9000); 
+    return `${tilfeldigProfil}-${tilfeldigTall}`;
+  }
+
+  window.byttTilRegistrering = function() {
+    document.getElementById('login-skjema').style.display = 'none';
+    document.getElementById('registrer-skjema').style.display = 'block';
+  }
+
+  window.byttTilInnlogging = function() {
+    document.getElementById('registrer-skjema').style.display = 'none';
+    document.getElementById('login-skjema').style.display = 'block';
+  }
+
+  window.handterRegistrering = async function() {
+    const brukernavn = document.getElementById('reg-brukernavn').value.trim();
+    const epost = document.getElementById('reg-epost').value.trim();
+    const passord = document.getElementById('reg-passord').value;
+    if (!brukernavn || !epost || !passord) return alert("Vennligst fyll ut alle feltene!");
+    try {
+      const { error: authError } = await supabase.auth.signUp({ email: epost, password: passord, options: { data: { username: brukernavn } } });
+      if (authError) throw authError;
+      alert("Profil opprettet! Logger inn...");
+      const { error: loginError } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
+      if (loginError) throw loginError;
+      sjekkBrukerStatusOgLastInn();
+    } catch (error) { alert("Klarte ikke å opprette profil: " + error.message); }
+  }
+
+  window.handterInnlogging = async function() {
+    const epost = document.getElementById('login-epost').value.trim();
+    const passord = document.getElementById('login-passord').value;
+    if (!epost || !passord) return alert("Skriv inn e-post og passord!");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
+      if (error) throw error;
+      sjekkBrukerStatusOgLastInn();
+    } catch (error) { alert("Feil ved innlogging: " + error.message); }
+  }
+
+  async function glemtPassord(event) {
+    if (event) event.preventDefault();
+    const epost = document.querySelector('input[type="email"]').value;
+    if (!epost) {
+        alert("Vennligst skriv inn e-postadressen din i e-postfeltet først.");
+        return;
+    }
+    const { data, error } = await supabase.auth.resetPasswordForEmail(epost, {
+        redirectTo: window.location.origin,
+    });
+    if (error) {
+        alert("Feil ved sending av tilbakestilling: " + error.message);
+    } else {
+        alert("Sjekk e-posten din! Vi har sendt deg en lenke for å tilbakestille passordet.");
+    }
+  }
+  window.glemtPassord = glemtPassord;
+
+  window.handterLoggUt = async function() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      location.reload(); 
+    } catch (error) { alert("Feil ved utlogging: " + error.message); }
+  }
+
+  window.opprettAvdeling = async function() {
+    const avdelingsNavn = document.getElementById('ny-avdeling-navn').value.trim();
+    if (!avdelingsNavn) return alert("Vennligst skriv inn et navn på avdelingen!");
+    const generertKode = genererInvitasjonskode();
+    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: nyAvdeling, error: avdError } = await supabase.from('avdelinger').insert([{ navn: avdelingsNavn, invitasjonskode: generertKode }]).select().single();
+      if (avdError) throw avdError;
+      await supabase.from('profiles').update({ avdeling_id: nyAvdeling.id }).eq('id', user.id);
+      alert(`Gratulerer! Avdelingen "${avdelingsNavn}" er opprettet.`);
+      oppdaterGrensesnittForAvdeling(avdelingsNavn, generertKode);
+    } catch (error) { alert("Feil: " + error.message); }
+  }
+
+  window.bliMedIAvdeling = async function() {
+    const kode = document.getElementById('invitasjonskode-felt').value.trim().toUpperCase();
+    if (!kode) return alert("Vennligst skriv inn en invitasjonskode!");
+    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: avdeling, error: finnError } = await supabase.from('avdelinger').select('id, navn, invitasjonskode').eq('invitasjonskode', kode).maybeSingle();
+      if (finnError || !avdeling) return alert("Ugyldig kode.");
+      await supabase.from('profiles').update({ avdeling_id: avdeling.id }).eq('id', user.id);
+      alert(`Suksess! Du er nå medlem av "${avdeling.navn}".`);
+      oppdaterGrensesnittForAvdeling(avdeling.navn, avdeling.invitasjonskode);
+    } catch (error) { alert("Feil: " + error.message); }
+  }
+
+  function oppdaterGrensesnittForAvdeling(navn, kode) {
+    document.getElementById('avdelings-oppsett').style.display = 'none';
+    document.getElementById('avdelings-status').style.display = 'block';
+    document.getElementById('vis-avdelingsnavn').innerText = navn;
+    document.getElementById('vis-invitasjonskode').innerText = kode;
+  }
+
+  window.veksleAvdelingsInfo = function() {
+    const detaljer = document.getElementById('avdelings-detaljer');
+    const pil = document.getElementById('trekkspill-pil');
+    if (detaljer.style.display === 'none') {
+        detaljer.style.display = 'block';
+        pil.innerText = '▲ Skjul info';
+    } else {
+        detaljer.style.display = 'none';
+        pil.innerText = '▼ Vis info & del';
+    }
+  }
+
+  window.kopierInvitasjonskode = function() {
+    const kode = document.getElementById('vis-invitasjonskode').innerText;
+    navigator.clipboard.writeText(kode).then(() => alert("Kopiert! 📋"));
+  }
+
+  window.sendEpostInvitasjon = function() {
+    const kode = document.getElementById('vis-invitasjonskode').innerText;
+    const avdelingsNavn = document.getElementById('vis-avdelingsnavn').innerText;
+    const emne = encodeURIComponent(`Bli med og tipp Glimt i Europa! 💛🖤`);
+    const brødtekst = encodeURIComponent(`Hei! Bli med å tippe mot meg i avdelingen "${avdelingsNavn}". Bruk koden: ${kode}`);
+    window.location.href = `mailto:?subject=${emne}&body=${brødtekst}`;
+  }
+
+  window.hoppOverAvdeling = function() {
+    document.getElementById('avdelings-oppsett').style.display = 'none';
+    sessionStorage.setItem('hoppet_over_avdeling', 'true');
+  }
+
+  async function lastInnTippeskjerm() {
+    const { data: { user } } = await supabase.auth.getUser();
+    try {
+        const { data: lagene } = await supabase.from('europa_lag').select('*');
+        const { data: tips } = await supabase.from('spiller_tips').select('*').eq('profil_id', user.id);
+        const tipsMap = {};
+        if (tips) tips.forEach(t => tipsMap[t.lag_id] = t.tippet_plassering);
+        const container = document.getElementById('lag-tippe-liste');
+        if (!lagene || lagene.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: var(--dempet-tekst);">Ingen lag er lagt inn ennå.</p>`;
+            return;
+        }
+        const sorterteLag = [...lagene].sort((a, b) => {
+            const plassA = tipsMap[a.id];
+            const plassB = tipsMap[b.id];
+            if (plassA && plassB) return plassA - plassB;
+            if (plassA) return -1;
+            if (plassB) return 1;
+            return a.navn.localeCompare(b.navn);
+        });
+        container.innerHTML = sorterteLag.map((lag, indeks) => `
+            <div class="drag-element" draggable="true" data-lag-id="${lag.id}">
+                <div class="drag-plassering">${indeks + 1}</div>
+                <span style="font-weight: bold;">${lag.navn}</span>
+                <div class="drag-handtak">☰</div>
+            </div>`).join('');
+        settOppDragAndDrop();
+    } catch (error) { console.error(error); }
+  }
+
+  function settOppDragAndDrop() {
+    const container = document.getElementById('lag-tippe-liste');
+    const elementer = container.querySelectorAll('.drag-element');
+    elementer.forEach(el => {
+        el.addEventListener('dragstart', () => el.classList.add('dragging'));
+        el.addEventListener('dragend', () => { el.classList.remove('dragging'); oppdaterPlasseringstall(); });
+    });
+    container.addEventListener('dragover', e => {
+        e.preventDefault();
+        const etterElement = finnDragOverPlassering(container, e.clientY);
+        const dragObjekt = document.querySelector('.dragging');
+        if (etterElement == null) container.appendChild(dragObjekt);
+        else container.insertBefore(dragObjekt, etterElement);
+    });
+  }
+
+  function finnDragOverPlassering(container, y) {
+    const muligeElementer = [...container.querySelectorAll('.drag-element:not(.dragging)')];
+    return muligeElementer.reduce((nærmeste, barn) => {
+        const boks = barn.getBoundingClientRect();
+        const avstand = y - boks.top - boks.height / 2;
+        if (avstand < 0 && avstand > nærmeste.offset) return { offset: avstand, element: barn };
+        else return nærmeste;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  function oppdaterPlasseringstall() {
+    const plasseringer = document.querySelectorAll('.drag-plassering');
+    plasseringer.forEach((plass, indeks) => plass.innerText = indeks + 1);
+  }
+
+  window.lagreAlleTips = async function() {
+    const låseDato = new Date('2026-09-08T00:00:00');
+    if (new Date() >= låseDato) {
+        alert("Det er ikke lenger mulig å endre tabellen (frist 8. sept passert).");
+        return;
+      }
+    const { data: { user } } = await supabase.auth.getUser();
+    const elementer = document.querySelectorAll('.drag-element');
+    const tipsOppdateringer = [];
+    elementer.forEach((el, indeks) => {
+        tipsOppdateringer.push({ profil_id: user.id, lag_id: parseInt(el.getAttribute('data-lag-id')), tippet_plassering: indeks + 1 });
+    });
+    try {
+        const { error } = await supabase.from('spiller_tips').upsert(tipsOppdateringer, { onConflict: 'profil_id, lag_id' });
+        if (error) throw error;
+        alert("Tabelltips lagret! 💛🖤");
+    } catch (error) { alert("Feil: " + error.message); }
+  }
+
+  async function lastInnKamperForRunde() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    
+    document.getElementById('vis-aktiv-runde').innerText = `Runde ${aktivRunde} av 8`;
+    document.getElementById('forrige-runde-btn').disabled = (aktivRunde === 1);
+    document.getElementById('neste-runde-btn').disabled = (aktivRunde === 8);
+    
+    const container = document.getElementById('kamp-tippe-liste');
+    if (!container) return;
+
+    container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper...</p>';
+    
+    try {
+        const { data: kamper, error: kampError } = await supabase
+            .from('europa_kamper')
+            .select('id, runde, kamp_dato, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn)')
+            .eq('runde', aktivRunde);
+            
+        if (kampError) throw kampError;
+        
+        const kampIder = kamper.map(k => k.id);
+        const { data: tipsTabell } = await supabase.from('spiller_kamp_tips').select('*').eq('profil_id', user.id).in('kamp_id', kampIder);
+        
+        const tipsMap = {};
+        if (tipsTabell) tipsTabell.forEach(t => tipsMap[t.kamp_id] = { hjemme: t.tippet_hjemmemaal, borte: t.tippet_bortemaal });
+        
+        const nå = new Date();
+
+        container.innerHTML = kamper.map(kamp => {
+            const tHjemme = tipsMap[kamp.id] ? tipsMap[kamp.id].hjemme : '';
+            const tBorte = tipsMap[kamp.id] ? tipsMap[kamp.id].borte : '';
+            
+            const isoDato = kamp.kamp_dato ? kamp.kamp_dato.replace(' ', 'T') : '';
+            const kampStart = new Date(isoDato);
+            const erLaast = kamp.kamp_dato ? (nå >= kampStart) : false;
+            const disabledAttr = erLaast ? 'disabled' : '';
+
+            return `
+                <div class="kamp-kort" data-kamp-id="${kamp.id}">
+                    <div class="kamp-header">
+                        <span>Kamp #${kamp.id} ${erLaast ? '(Låst)' : ''}</span>
+                    </div>
+                    <div class="kamp-innhold">
+                        <span>${kamp.hjemmelag.navn}</span>
+                        <input class="hjemme-input" type="number" value="${tHjemme}" placeholder="-" ${disabledAttr}>
+                        <span>-</span>
+                        <input class="borte-input" type="number" value="${tBorte}" placeholder="-" ${disabledAttr}>
+                        <span>${kamp.bortelag.navn}</span>
+                    </div>
+                </div>`;
+        }).join('');
+    } catch (error) { 
+        console.error(error); 
+        container.innerHTML = '<p style="color:red;">Kunne ikke laste kamper.</p>';
+    }
+  }
+
+  window.forrigeRunde = function() { if (aktivRunde > 1) { aktivRunde--; lastInnKamperForRunde(); } }
+  window.nesteRunde = function() { if (aktivRunde < 8) { aktivRunde++; lastInnKamperForRunde(); } }
+
+  window.lagreRundensKamptips = async function() {
+    const { data: { user } } = await supabase.auth.getUser();
+    const kampKortene = document.querySelectorAll('.kamp-kort');
+    const tipsOppdateringer = [];
+    kampKortene.forEach(kort => {
+        const hVerdi = kort.querySelector('.hjemme-input').value.trim();
+        const bVerdi = kort.querySelector('.borte-input').value.trim();
+        if (hVerdi !== "" && bVerdi !== "") {
+            tipsOppdateringer.push({ profil_id: user.id, kamp_id: parseInt(kort.getAttribute('data-kamp-id')), tippet_hjemmemaal: parseInt(hVerdi), tippet_bortemaal: parseInt(bVerdi) });
+        }
+    });
+    try {
+        const { error } = await supabase.from('spiller_kamp_tips').upsert(tipsOppdateringer, { onConflict: 'profil_id, kamp_id' });
+        if (error) throw error;
+        alert("Kamptips lagret!");
+    } catch (error) { alert("Feil: " + error.message); }
+  }
+
+  async function sjekkBrukerStatusOgLastInn() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const authContainer = document.getElementById('auth-container');
+    const spillSeksjon = document.getElementById('spill-seksjon');
+    const loggUtKnapp = document.getElementById('logg-ut-knapp');
+
+    if (user) {
+      if (authContainer) authContainer.style.display = 'none';
+      if (spillSeksjon) spillSeksjon.style.display = 'block';
+      if (loggUtKnapp) loggUtKnapp.style.display = 'block';
+
+      // Sørg for at vi laster data i bakgrunnen FØR vi viser leaderboard, 
+      // slik at tabelltips-seksjonen ikke blinker forbi.
+      await window.oppdaterAlleSpillerPoengUtenAlert();
+
+      const { data: profil } = await supabase
+        .from('profiles')
+        .select('*, avdelinger(navn, invitasjonskode)')
+        .eq('id', user.id)
+        .single();
+
+      if (profil) {
+        if (profil.avdeling_id && profil.avdelinger) {
+          oppdaterGrensesnittForAvdeling(profil.avdelinger.navn, profil.avdelinger.invitasjonskode);
+        } else {
+          const harHoppetOver = sessionStorage.getItem('hoppet_over_avdeling');
+          document.getElementById('avdelings-oppsett').style.display = (harHoppetOver === 'true') ? 'none' : 'block';
+          document.getElementById('avdelings-status').style.display = 'none';
+        }
+        lastInnTippeskjerm();
+      }
+
+      // Vis leaderboard direkte i stedet for at visLeaderboard() overstyrer etterpå
+      window.visLeaderboard();
+
+    } else {
+      if (authContainer) authContainer.style.display = 'flex';
+      if (spillSeksjon) spillSeksjon.style.display = 'none';
+      if (loggUtKnapp) loggUtKnapp.style.display = 'none';
+      
+      document.getElementById('login-skjema').style.display = 'block';
+      document.getElementById('registrer-skjema').style.display = 'none';
+    }
+  }
+
+  window.beregnPoeng = function(tippetH, tippetB, fasitH, fasitB) {
+      let p = 0;
+      const tippetRes = tippetH === tippetB ? 'U' : (tippetH > tippetB ? 'H' : 'B');
+      const fasitRes = fasitH === fasitB ? 'U' : (fasitH > fasitB ? 'H' : 'B');
+      if (tippetRes === fasitRes) p += 2;
+      if (tippetH === fasitH) p += 1;
+      if (tippetB === fasitB) p += 1;
+      return p;
+  };
+
+  window.oppdaterAlleSpillerPoeng = async function() {
+      const { data: kamper } = await supabase.from('europa_kamper').select('*').not('fasit_hjemme', 'is', null);
+      const { data: alleTips } = await supabase.from('spiller_kamp_tips').select('*');
+      const poengTavle = {};
+      
+      alleTips.forEach(tips => {
+          const kamp = kamper.find(k => k.id === tips.kamp_id);
+          if (kamp) {
+              const p = window.beregnPoeng(tips.tippet_hjemmemaal, tips.tippet_bortemaal, kamp.fasit_hjemme, kamp.fasit_borte);
+              poengTavle[tips.profil_id] = (poengTavle[tips.profil_id] || 0) + p;
+          }
+      });
+      
+      for (const [id, p] of Object.entries(poengTavle)) {
+          await supabase.from('profiles').update({ poeng: p }).eq('id', id);
+      }
+      alert("Leaderboard oppdatert!");
+      window.visLeaderboard();
+  };
+
+  window.visLeaderboard = async function(type = 'total') {
+      const seksjon = document.getElementById('seksjon-leaderboard');
+      if (seksjon) seksjon.style.display = 'block';
+      
+      const tabellTips = document.getElementById('seksjon-tabell-tips');
+      const kampTips = document.getElementById('seksjon-kamp-tips');
+      const omSeksjon = document.getElementById('seksjon-om');
+      if (tabellTips) tabellTips.style.display = 'none';
+      if (kampTips) kampTips.style.display = 'none';
+      if (omSeksjon) omSeksjon.style.display = 'none';
+
+      const liste = document.getElementById('leaderboard-liste');
+      if (liste) liste.innerHTML = "Henter data...";
+
+      try {
+          const { data: { user } } = await supabase.auth.getUser();
+          const { data: profil } = user ? await supabase.from('profiles').select('avdeling_id').eq('id', user.id).single() : { data: null };
+
+          let query = supabase.from('profiles').select('id, brukernavn, poeng, kamp_poeng, gruppe_poeng').order('poeng', { ascending: false });
+          
+          if (type === 'avdeling' && profil?.avdeling_id) {
+              query = query.eq('avdeling_id', profil.avdeling_id);
+          } else if (type === 'avdeling') {
+              alert("Du er ikke tilknyttet en avdeling.");
+              return;
+          }
+
+          const { data, error } = await query;
+          if (error) throw error;
+
+          if (liste) {
+              if (data.length === 0) {
+                  liste.innerHTML = "<tr><td colspan='5' style='color:white; text-align:center;'>Ingen spillere funnet.</td></tr>";
+              } else {
+                  liste.innerHTML = data.map((b, i) => `
+                      <tr>
+                          <td>${i + 1}.</td>
+                          <td style="cursor: pointer; color: var(--glimt-gul);" 
+                              onclick="window.hentOgVisTips('${b.id}', '${b.brukernavn}')">
+                              ${b.brukernavn}
+                          </td>
+                          <td>${b.kamp_poeng || 0}</td>
+                          <td>${b.gruppe_poeng || 0}</td>
+                          <td class="totalt-poeng">${b.poeng || 0} p</td>
+                      </tr>
+                  `).join('');
+              }
+          }
+
+          if (seksjon) {
+              seksjon.style.display = 'block';
+              seksjon.style.position = 'relative';
+              seksjon.style.zIndex = '9999';
+              seksjon.style.backgroundColor = '#1a1e2a';
+          }
+
+      } catch (err) {
+          console.error("Feil ved henting av leaderboard:", err);
+          if (liste) liste.innerHTML = "<tr><td colspan='5'>Kunne ikke laste data.</td></tr>";
+      }
+  };
+
+  window.oppdaterAlleSpillerPoengUtenAlert = async function() {
+      const { data: kamper } = await supabase.from('europa_kamper').select('*').not('fasit_hjemme', 'is', null);
+      const { data: alleKampTips } = await supabase.from('spiller_kamp_tips').select('*');
+      const { data: alleTabellTips } = await supabase.from('spiller_tips').select('*');
+      const { data: lagFasit } = await supabase.from('europa_lag').select('id, fasit_plassering').not('fasit_plassering', 'is', null);
+
+      const spillerPoengOversikt = {};
+
+      if (alleKampTips && kamper) {
+          alleKampTips.forEach(tips => {
+              const kamp = kamper.find(k => k.id === tips.kamp_id);
+              if (kamp) {
+                  const p = window.beregnPoeng(tips.tippet_hjemmemaal, tips.tippet_bortemaal, kamp.fasit_hjemme, kamp.fasit_borte);
+                  
+                  if (!spillerPoengOversikt[tips.profil_id]) {
+                      spillerPoengOversikt[tips.profil_id] = { kampP: 0, gruppeP: 0 };
+                  }
+                  spillerPoengOversikt[tips.profil_id].kampP += p;
+              }
+          });
+      }
+
+      if (alleTabellTips && lagFasit && lagFasit.length > 0) {
+          const brukerTipsMap = {};
+          alleTabellTips.forEach(tips => {
+              if (!brukerTipsMap[tips.profil_id]) {
+                  brukerTipsMap[tips.profil_id] = [];
+              }
+              brukerTipsMap[tips.profil_id].push(tips);
+          });
+
+          const finnIntervall = (plass) => {
+              if (plass >= 1 && plass <= 8) return 1;
+              if (plass >= 9 && plass <= 16) return 2;
+              if (plass >= 17 && plass <= 24) return 3;
+              if (plass >= 25 && plass <= 36) return 4;
+              return 0;
+          };
+
+          for (const [profilId, brukerTips] of Object.entries(brukerTipsMap)) {
+              let gruppePoeng = 0;
+
+              brukerTips.forEach(tips => {
+                  const lag = lagFasit.find(l => l.id === tips.lag_id);
+                  if (!lag || lag.fasit_plassering == null) return;
+
+                  const tippetPlass = tips.tippet_plassering;
+                  const fasitPlass = lag.fasit_plassering;
+
+                  if (tippetPlass === fasitPlass) {
+                      gruppePoeng += 4;
+                  } else if (finnIntervall(tippetPlass) === finnIntervall(fasitPlass)) {
+                      gruppePoeng += 2;
+                  }
+
+                  if (fasitPlass === 1 && tippetPlass === 1) {
+                      gruppePoeng += 5;
+                  }
+
+                  if (fasitPlass === 25 && tippetPlass === 25) {
+                      gruppePoeng += 5;
+                  }
+              });
+
+              if (!spillerPoengOversikt[profilId]) {
+                  spillerPoengOversikt[profilId] = { kampP: 0, gruppeP: 0 };
+              }
+              spillerPoengOversikt[profilId].gruppeP = gruppePoeng;
+          }
+      }
+      
+      for (const [profilId, poengObjekt] of Object.entries(spillerPoengOversikt)) {
+          const totalt = poengObjekt.kampP + poengObjekt.gruppeP;
+          
+          await supabase.from('profiles').update({ 
+              kamp_poeng: poengObjekt.kampP,   
+              gruppe_poeng: poengObjekt.gruppeP, 
+              poeng: totalt                    
+          }).eq('id', profilId);
+      }
+  };
+
+  window.hentOgVisTips = async function(brukerId, brukernavn) {
+      const { data: kamptips } = await supabase
+      .from('spiller_kamp_tips')
+      .select(`
+          tippet_hjemmemaal, 
+          tippet_bortemaal, 
+          europa_kamper!kamp_id(hjemmelag:europa_lag!hjemmelag_id(navn), bortelag:europa_lag!bortelag_id(navn))
+      `)
+      .eq('profil_id', brukerId);
+
+      const { data: gruppetips } = await supabase
+      .from('spiller_tips')
+      .select(`tippet_plassering, europa_lag!lag_id(navn)`)
+      .eq('profil_id', brukerId);
+
+      const modal = document.getElementById('tips-modal');
+      const tittel = document.getElementById('tips-tittel');
+      const innhold = document.getElementById('tips-innhold');
+
+      tittel.innerText = "TIPSENE TIL: " + brukernavn.toUpperCase();
+      
+      let html = `<h3>⚽ KAMPTIPS</h3>`;
+      if (kamptips) {
+          kamptips.forEach(t => {
+              const kamp = t.europa_kamper;
+              html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding:5px 0;">
+                          <span>${kamp.hjemmelag.navn} - ${kamp.bortelag.navn}</span>
+                          <span style="color:var(--glimt-gul); font-weight:bold;">${t.tippet_hjemmemaal} - ${t.tippet_bortemaal}</span>
+                       </div>`;
+          });
+      }
+
+      html += `<h3 style="margin-top:20px;">🌍 GRUPPETIPS (36 lag)</h3>`;
+      
+      if (gruppetips) {
+          gruppetips.sort((a, b) => a.tippet_plassering - b.tippet_plassering);
+          gruppetips.forEach(t => {
+              html += `<div>${t.tippet_plassering}. ${t.europa_lag.navn}</div>`;
+          });
+      }
+
+      innhold.innerHTML = html;
+      modal.style.display = 'block';
+  };
+
+  sjekkBrukerStatusOgLastInn();
+  </script>
+</body>
+</html>
