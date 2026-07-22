@@ -426,7 +426,10 @@
         <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5; margin-bottom: 20px;">
           Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!
         </p>
-
+        <h3 style="font-size: 1.1rem; margin-top: 15px;">Liga</h3>
+        <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
+         Liga er en måte å gjøre konkurransen enda mer intern i de ulike avdelingene. Du kan i tillegg til å være med i den universelle konkurransen delta i en liga, dette kan være internt i din enhet eller andre steder det er naturlig å være med. For enkelhets skyld la en være ansvarlig for å opprette ligaen, og så kan han dele koden til den.
+        </p>
         <h3 style="font-size: 1.1rem; margin-top: 15px;">Slik beregnes poengene</h3>
         <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Kamptips (enkeltkamper)</p>
         <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
@@ -551,7 +554,10 @@
           <h2>Om Glimt i Europa</h2>
           <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.</p>
           <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!</p>
-          
+          <h3 style="font-size: 1.1rem; margin-top: 15px;">Liga</h3>
+          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
+           Liga er en måte å gjøre konkurransen enda mer intern i de ulike avdelingene. Du kan i tillegg til å være med i den universelle konkurransen delta i en liga, dette kan være internt i din enhet eller andre steder det er naturlig å være med. For enkelhets skyld la en være ansvarlig for å opprette ligaen, og så kan han dele koden til den.
+          </p>
           <h3 style="margin-top: 20px; color: var(--glimt-gul);">Slik beregnes poengene</h3>
           <p class="hjelpetekst" style="color: var(--glimt-gul); margin-bottom: 5px;">Kamptips (enkeltkamper)</p>
           <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
@@ -1029,19 +1035,52 @@
           if (liste) {
               if (data.length === 0) {
                   liste.innerHTML = "<tr><td colspan='5' style='color:white; text-align:center;'>Ingen spillere funnet.</td></tr>";
+              } else if (type === 'avdeling' || data.length <= 25) {
+                  // For avdelinger eller korte lister viser vi alle uten kollaps
+                  liste.innerHTML = data.map((b, i) => genererRad(b, i, user?.id)).join('');
               } else {
-                  liste.innerHTML = data.map((b, i) => `
-                      <tr>
-                          <td>${i + 1}.</td>
-                          <td style="cursor: pointer; color: var(--glimt-gul);" 
-                              onclick="window.hentOgVisTips('${b.id}', '${b.brukernavn}')">
-                              ${b.brukernavn}
-                          </td>
-                          <td>${b.kamp_poeng || 0}</td>
-                          <td>${b.gruppe_poeng || 0}</td>
-                          <td class="totalt-poeng">${b.poeng || 0} p</td>
-                      </tr>
-                  `).join('');
+                  // Avansert kollaps-logikk KUN for universell tabell når det er mange deltakere (> 25)
+                  let html = "";
+                  const innloggetBrukerId = user?.id;
+                  let brukerIndex = data.findIndex(b => b.id === innloggetBrukerId);
+
+                  // 1. Vis alltid topp 20
+                  const toppSlutt = Math.min(20, data.length);
+                  for (let i = 0; i < toppSlutt; i++) {
+                      html += genererRad(data[i], i, innloggetBrukerId);
+                  }
+
+                  // Sjekk om brukeren er langt nede (utenfor topp 20 og ikke blant de første i "midt-sokkelen")
+                  if (brukerIndex > 23) {
+                      html += `<tr><td colspan="5" style="text-align: center; color: var(--dempet-tekst); padding: 10px; background: rgba(0,0,0,0.2);">... (flere spillere skjult) ...</td></tr>`;
+
+                      // Vis 3 over bruker, brukeren selv, og 3 under
+                      const startMidt = Math.max(20, brukerIndex - 3);
+                      const sluttMidt = Math.min(data.length - 1, brukerIndex + 3);
+
+                      for (let i = startMidt; i <= sluttMidt; i++) {
+                          html += genererRad(data[i], i, innloggetBrukerId);
+                      }
+
+                      if (sluttMidt < data.length - 1) {
+                          html += `<tr><td colspan="5" style="text-align: center; color: var(--dempet-tekst); padding: 10px; background: rgba(0,0,0,0.2);">... (flere spillere skjult) ...</td></tr>`;
+                          
+                          // Vis bunnen (siste 3 spillere for spenningens skyld, eller bare la de være skjult)
+                          for (let i = Math.max(sluttMidt + 1, data.length - 3); i < data.length; i++) {
+                              html += genererRad(data[i], i, innloggetBrukerId);
+                          }
+                      }
+                  } else if (toppSlutt < data.length) {
+                      // Hvis brukeren er i topp 20, men det er mange spillere totalt
+                      html += `<tr><td colspan="5" style="text-align: center; color: var(--dempet-tekst); padding: 10px; background: rgba(0,0,0,0.2);">... (${data.length - 20} flere spillere lenger ned) ...</td></tr>`;
+                      
+                      // Vis bunnen av tabellen
+                      for (let i = Math.max(20, data.length - 3); i < data.length; i++) {
+                          html += genererRad(data[i], i, innloggetBrukerId);
+                      }
+                  }
+
+                  liste.innerHTML = html;
               }
           }
 
@@ -1057,6 +1096,25 @@
           if (liste) liste.innerHTML = "<tr><td colspan='5'>Kunne ikke laste data.</td></tr>";
       }
   };
+
+  // Hjelpefunksjon for å generere en tabellrad (for å slippe duplisering av kode)
+  function genererRad(b, i, innloggetBrukerId) {
+      const erMinRad = b.id === innloggetBrukerId;
+      const bakgrunnstil = erMinRad ? 'background-color: rgba(255, 215, 0, 0.15); font-weight: bold;' : '';
+      
+      return `
+          <tr style="${bakgrunnstil}">
+              <td>${i + 1}.</td>
+              <td style="cursor: pointer; color: var(--glimt-gul);" 
+                  onclick="window.hentOgVisTips('${b.id}', '${b.brukernavn}')">
+                  ${b.brukernavn} ${erMinRad ? '(Du)' : ''}
+              </td>
+              <td>${b.kamp_poeng || 0}</td>
+              <td>${b.gruppe_poeng || 0}</td>
+              <td class="totalt-poeng">${b.poeng || 0} p</td>
+          </tr>
+      `;
+  }
 
   window.oppdaterAlleSpillerPoengUtenAlert = async function() {
       const { data: kamper } = await supabase.from('europa_kamper').select('*').not('fasit_hjemme', 'is', null);
