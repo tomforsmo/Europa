@@ -802,16 +802,15 @@
       }
     }
 
-    window.kopierInvitasjonskode = function() {
-      const kode = document.getElementById('vis-invitasjonskode').innerText;
-      navigator.clipboard.writeText(kode).then(() => alert("Kopiert! 📋"));
-    }
-
     window.sendEpostInvitasjon = function() {
       const kode = document.getElementById('vis-invitasjonskode').innerText;
       const avdelingsNavn = document.getElementById('vis-avdelingsnavn').innerText;
       const emne = encodeURIComponent(`Bli med og tipp Glimt i Europa! 💛🖤`);
-      const brødtekst = encodeURIComponent(`Hei! Bli med å tippe mot meg i avdelingen "${avdelingsNavn}". Bruk koden: ${kode}`);
+      
+      // Lagt til \n for linjeskift slik at lenken står tydelig for seg selv
+      const melding = `Hei!\n\nBli med å tippe mot meg i avdelingen "${avdelingsNavn}". Bruk koden: ${kode}\n\nDu finner konkurransen her:\nhttps://glimtieuropa.vercel.app/`;
+      
+      const brødtekst = encodeURIComponent(melding);
       window.location.href = `mailto:?subject=${emne}&body=${brødtekst}`;
     }
 
