@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag.js?id=G-GEJQE97F24"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GEJQE97F24');
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/tomforsmo/Glimt-i-Europa/refs/heads/main/favicon.ico">
@@ -379,6 +388,17 @@
       width: 100%;
       margin-bottom: 15px;
     }
+    @media (max-width: 600px) {
+  .leaderboard-tabell th, 
+  .leaderboard-tabell td {
+    padding: 8px 3px !important;
+    font-size: 0.7rem !important;
+  }
+  #seksjon-leaderboard .knapp {
+    padding: 10px 5px !important;
+    font-size: 0.85rem !important;
+  }
+}
   </style>
 </head>
 <body>
@@ -1143,10 +1163,27 @@
     }
 
     window.oppdaterAlleSpillerPoengUtenAlert = async function() {
-        const { data: kamper } = await supabase.from('europa_kamper').select('*').not('fasit_hjemme', 'is', null);
-        const { data: alleKampTips } = await supabase.from('spiller_kamp_tips').select('*');
-        const { data: alleTabellTips } = await supabase.from('spiller_tips').select('*');
-        const { data: lagFasit } = await supabase.from('europa_lag').select('id, fasit_plassering').not('fasit_plassering', 'is', null);
+    // 1. Hent den automatisk beregnede tabellen fra Supabase (view-et vårt)
+    const { data: utregnetTabell } = await supabase.from('offisiell_tabell').select('*');
+
+    // 2. Oppdater europa_lag i databasen med de nye fasit-plasseringene automatisk
+    if (utregnetTabell && utregnetTabell.length > 0) {
+        for (let rad of utregnetTabell) {
+            await supabase
+                .from('europa_lag')
+                .update({ fasit_plassering: rad.plassering })
+                .eq('id', rad.lag_id);
+        }
+    }
+
+    // 3. Fortsett med din eksisterende logikk for å hente kamper, tips og lagfasit
+    const { data: kamper } = await supabase.from('europa_kamper').select('*').not('fasit_hjemme', 'is', null);
+    const { data: alleKampTips } = await supabase.from('spiller_kamp_tips').select('*');
+    const { data: alleTabellTips } = await supabase.from('spiller_tips').select('*');
+    const { data: lagFasit } = await supabase.from('europa_lag').select('id, fasit_plassering').not('fasit_plassering', 'is', null);
+
+    // Her fortsetter resten av koden din for poengberegning...
+
 
         const spillerPoengOversikt = {};
 
