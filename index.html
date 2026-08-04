@@ -512,10 +512,10 @@
       
       <div id="avdelings-seksjon">
         <div id="avdelings-oppsett" class="avdelings-kort" style="display: none;">
-          <h3>Bli med i eller opprett en avdeling</h3>
-          <p class="hjelpetekst">Du må være tilknyttet en avdeling for å kunne sammenligne poengene dine.</p>
+          <h3>Bli med i eller opprett en liga</h3>
+          <p class="hjelpetekst">Du bør vøre tilknytet en liga for å lettere kunne se hvordan du ligger an sammenlignet med kollegaene dine.</p>
           <div class="valg-boks">
-            <h4>Bli med i en avdeling</h4>
+            <h4>Bli med i en liga</h4>
             <div class="input-gruppe">
               <input type="text" id="invitasjonskode-felt" placeholder="F.eks. BERG-1916">
               <button onclick="bliMedIAvdeling()" class="knapp knapp-suksess">Bli med</button>
@@ -523,9 +523,9 @@
           </div>
           <hr class="delelinje">
           <div class="valg-boks">
-            <h4>Opprett ny avdeling</h4>
+            <h4>Opprett ny liga</h4>
             <div class="input-gruppe">
-              <input type="text" id="ny-avdeling-navn" placeholder="F.eks. Markedsavdelingen">
+              <input type="text" id="ny-avdeling-navn" placeholder="F.eks. kommunikasjon">
               <button onclick="opprettAvdeling()" class="knapp knapp-primær">Opprett</button>
             </div>
           </div>
@@ -600,10 +600,10 @@
             </div>
             
             <div style="margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.4); border-radius: 8px; border: 1px solid #444;">
-              <h4 style="margin-top: 0; color: #ffcc00; font-size: 14px; text-transform: uppercase;">Eksisterende avdelinger:</h4>
+              <h4 style="margin-top: 0; color: #ffcc00; font-size: 14px; text-transform: uppercase;">Eksisterende ligaer:</h4>
               
               <!-- Knappen som kjører funksjonen direkte -->
-              <button onclick="lastEksisterendeGrupper()" style="background: #ffcc00; color: #000; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">Hent avdelinger</button>
+              <button onclick="lastEksisterendeGrupper()" style="background: #ffcc00; color: #000; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">Hent ligaer</button>
           
               <div id="eksisterende-grupper-liste-lb">
                 <span style="font-style: italic; color: #ccc;">Klikk på knappen over for å vise...</span>
