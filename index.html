@@ -46,7 +46,8 @@
       background-color: var(--mork-gra);
       width: 100%;
       text-align: center;
-      padding: 20px 0;
+      padding: 20px 50px; /* Gir plass til hamburgermenyen på høyre side */
+      box-sizing: border-box;
       border-bottom: 3px solid var(--glimt-gul);
       position: relative;
       display: flex;
@@ -57,9 +58,20 @@
     header h1 {
       margin: 0;
       color: var(--glimt-gul);
-      font-size: 2rem;
+      font-size: 1.8rem;
       text-transform: uppercase;
       letter-spacing: 2px;
+    }
+
+    /* Mobilanpasning for header slik at titten ikke treffer menyen */
+    @media (max-width: 480px) {
+      header {
+        padding: 15px 50px 15px 15px; 
+      }
+      header h1 {
+        font-size: 1.25rem; /* Mindre skriftstørrelse på små skjermer */
+        letter-spacing: 1px;
+      }
     }
 
     /* --- HAMBURGERMENY STYLING --- */
@@ -399,6 +411,53 @@
     font-size: 0.85rem !important;
   }
 }
+/* --- BUNNMENY STYLING --- */
+.bunn-meny {
+      display: none; /* Skjult på store skjermer (PC) */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(18, 18, 18, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #333;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+      z-index: 10000;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+
+    .bunn-meny a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: bold;
+      transition: color 0.2s;
+    }
+
+    .bunn-meny a .ikon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+
+    .bunn-meny a:hover, 
+    .bunn-meny a.aktiv {
+      color: #ffcc00; /* Glimt-gul farge når den er aktiv */
+    }
+
+    /* Vises kun på mobil, og lager plass til menyen i bunnen av innholdet */
+    @media (max-width: 768px) {
+      .bunn-meny {
+        display: flex;
+      }
+      body {
+        padding-bottom: 70px; 
+      }
+    }
   </style>
 </head>
 <body>
@@ -1408,8 +1467,85 @@
       const modal = document.getElementById('ledertavle-modal');
       if (modal) modal.style.display = 'none';
     };
+// --- SVEIP-FUNKSJONALITET FOR MOBIL ---
+let beroringStartX = 0;
+    let beroringSluttX = 0;
+    const minimumSveipAvstand = 50; // Hvor mange piksler man må sveipe for at det skal registreres
 
+    // Bestem rekkefølgen på sidene når man sveiper
+    const siderRekkefolge = ['kamp', 'tabell', 'leaderboard', 'om'];
+    
+    function finnAktivSideIndeks() {
+      if (document.getElementById('seksjon-kamp-tips').style.display === 'block') return 0;
+      if (document.getElementById('seksjon-tabell-tips').style.display === 'block') return 1;
+      if (document.getElementById('seksjon-leaderboard').style.display === 'block') return 2;
+      if (document.getElementById('seksjon-om').style.display === 'block') return 3;
+      return 0; // Standard
+    }
+
+    function gaaTilSide(indeks) {
+      switch(siderRekkefolge[indeks]) {
+        case 'kamp': window.visKampSeksjon(); break;
+        case 'tabell': window.visTabellSeksjon(); break;
+        case 'leaderboard': window.visLeaderboard('total'); break;
+        case 'om': window.visOmSeksjon(); break;
+      }
+    }
+
+    document.addEventListener('touchstart', e => {
+      beroringStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    document.addEventListener('touchend', e => {
+      beroringSluttX = e.changedTouches[0].screenX;
+      handterSveip();
+    }, false);
+
+    function handterSveip() {
+      const differanse = beroringSluttX - beroringStartX;
+      if (Math.abs(differanse) < minimumSveipAvstand) return; // For kort sveip, ignorér
+
+      let aktivIndeks = finnAktivSideIndeks();
+
+      if (differanse > 0) {
+        // Sveip til høyre -> Gå til forrige side
+        aktivIndeks = (aktivIndeks - 1 + siderRekkefolge.length) % siderRekkefolge.length;
+      } else {
+        // Sveip til venstre -> Gå til neste side
+        aktivIndeks = (aktivIndeks + 1) % siderRekkefolge.length;
+      }
+      gaaTilSide(aktivIndeks);
+    }
     sjekkBrukerStatusOgLastInn();
+ 
+  // Hjelpefunksjon for å merke aktiv knapp i bunnmenyen
+  function markerAktivMeny(sideId) {
+      document.querySelectorAll('.bunn-meny a').forEach(a => a.classList.remove('aktiv'));
+      const aktivEl = document.getElementById(sideId);
+      if (aktivEl) aktivEl.classList.add('aktiv');
+    }
   </script>
+  <!-- BUNNMENY FOR MOBIL -->
+  <nav class="bunn-meny" id="bunn-meny">
+    <a href="#" id="nav-kamp" onclick="visKampSeksjon()">
+      <span class="ikon">⚽</span>
+      <span>Kamptips</span>
+    </a>
+    <a href="#" id="nav-tabell" onclick="visTabellSeksjon()">
+      <span class="ikon">📋</span>
+      <span>Tabelltips</span>
+    </a>
+    <a href="#" id="nav-leaderboard" onclick="visLeaderboard('total')">
+      <span class="ikon">🏆</span>
+      <span>Tabell</span>
+    </a>
+    <a href="#" id="nav-om" onclick="visOmSeksjon()">
+      <span class="ikon">ℹ️</span>
+      <span>Om spillet</span>
+    </a>
+  </nav>
+
+</body>
+</html>
 </body>
 </html>
