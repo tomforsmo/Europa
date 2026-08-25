@@ -457,17 +457,6 @@
       body {
         padding-bottom: 70px; 
       }
-      /* Legg til denne for de røde varsel-prikkene på bunnmenyen */
-.rod-prikk {
-    position: absolute;
-    top: 4px;
-    right: 32%;
-    width: 8px;
-    height: 8px;
-    background-color: #ff3b30;
-    border-radius: 50%;
-    border: 2px solid #121212; /* Matcher bakgrunnsfargen på menyen for en fin kant */
-}
     }
 
     .live-tabell-container {
@@ -536,17 +525,57 @@
     tr.strek-bundet-24 td {
       border-bottom: 3px solid #17a2b8 !important;
     }
+
     .rod-prikk {
-    position: absolute;
-    top: 5px;
-    right: 15px;
-    width: 9px;
-    height: 9px;
-    background-color: #ff3b30;
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 4px rgba(255, 59, 48, 0.8);
-}
+      position: absolute;
+      top: 5px;
+      right: 15px;
+      width: 9px;
+      height: 9px;
+      background-color: #ff3b30;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 4px rgba(255, 59, 48, 0.8);
+      border: 2px solid #121212;
+    }
+
+    /* --- SPYMODE MODAL STYLING --- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 20000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .modal-boks {
+      background: #1a1e2a;
+      border: 2px solid var(--glimt-gul);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 450px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .modal-lukk {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: var(--glimt-gul);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -611,7 +640,7 @@
       </div>
 
       <div id="auth-om-seksjon" class="auth-kort">
-        <h2>Om Glimt i Europa</h2>
+        < <h2>Om Glimt i Europa</h2>
         <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
           Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.
         </p>
@@ -730,7 +759,7 @@
       <div id="seksjon-kamp-tips" style="display: none;">
         <div class="avdelings-kort">
           <h3>Tipp kampresultater</h3>
-          <p class="hjelpetekst">Sveip eller klikk deg gjennom de 8 rundene for å tippe enkeltkamper.</p>
+          <p class="hjelpetekst">Sveip eller klikk deg gjennom rundene for å tippe enkeltkamper.</p>
 
           <div class="runde-svelger">
             <button id="forrige-runde-btn" class="runde-svelger-knapp" onclick="forrigeRunde()">◀</button>
@@ -746,6 +775,7 @@
       <div id="seksjon-leaderboard" style="display: none;">
         <div class="avdelings-kort">
             <h2 style="color: var(--glimt-gul);">Glimt i Europa - Tabell</h2>
+            <p style="font-size: 0.85rem; color: var(--dempet-tekst); margin-bottom: 10px;">💡 Trykk på en spiller for å spionere på deres tips!</p>
             <table class="leaderboard-tabell">
                 <thead>
                     <tr>
@@ -769,28 +799,33 @@
       <div id="seksjon-om" style="display: none;">
         <div class="avdelings-kort">
           <h2>Om Glimt i Europa</h2>
-          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.</p>
-          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!</p>
+          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
+            Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.
+          </p>
+          <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5; margin-bottom: 20px;">
+            Det legges i utgangspunktet ikke opp til premiering på den universelle hovedtabellen – her kjemper man først og fremst om den ultimate æren og retten til å skryte på jobben! Men hvem vet... kanskje vanker det en drakt eller to underveis? Sosialkomiteen i avdelingene oppfordres uansett til å sette opp egne premier i sine respektive ligaer!
+          </p>
           <h3 style="font-size: 1.1rem; margin-top: 15px;">Liga</h3>
           <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
            Liga er en måte å gjøre konkurransen enda mer intern i de ulike avdelingene. Du kan i tillegg til å være med i den universelle konkurransen delta i en liga, dette kan være internt i din enhet eller andre steder det er naturlig å være med. For enkelhets skyld la en være ansvarlig for å opprette ligaen, og så kan han dele koden til den.
           </p>
-          <h3 style="margin-top: 20px; color: var(--glimt-gul);">Slik beregnes poengene</h3>
-          <p class="hjelpetekst" style="color: var(--glimt-gul); margin-bottom: 5px;">Kamptips (enkeltkamper)</p>
+          <h3 style="font-size: 1.1rem; margin-top: 15px;">Slik beregnes poengene</h3>
+          <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Kamptips (enkeltkamper)</p>
           <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
             <li><strong style="color: var(--lys-tekst);">Riktig kampresultat (H/U/B):</strong> 2 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Riktig antall mål for hjemmelag:</strong> 1 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Riktig antall mål for bortelag:</strong> 1 poeng</li>
           </ul>
-
-          <p class="hjelpetekst" style="color: var(--glimt-gul); margin-bottom: 5px; margin-top: 15px;">Poengfordeling - Tabelltips (36 lag)</p>
+          <p class="hjelpetekst" style="margin-bottom: 15px; font-size: 0.85rem;">Maksimalt 4 poeng per kamp.</p>
+  
+          <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Poengfordeling - Tabelltips (36 lag)</p>
           <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
             <li><strong style="color: var(--lys-tekst);">Nøyaktig riktig plassering:</strong> 4 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Riktig intervall (f.eks. topp 8, 9-16 osv.):</strong> 2 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Bonus for å treffe 1. plass og 36. plass nøyaktig:</strong> +5 poeng</li>
           </ul>
-
-          <h3 style="margin-top: 20px; color: var(--glimt-gul);">Frister</h3>
+  
+          <h3 style="font-size: 1.1rem; margin-top: 20px;">Frister</h3>
           <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
             <li><strong style="color: var(--lys-tekst);">Tabelltips:</strong> Fristen er satt til 8. september – da starter Champions League.</li>
             <li><strong style="color: var(--lys-tekst);">Kamptips:</strong> Fristen for å registrere eller endre tips er ved kampstart (kampene låses automatisk når avspark går).</li>
@@ -801,11 +836,15 @@
     </div>
   </main>
 
-  <div id="tips-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; overflow-y:auto; padding:20px;">
-    <div style="max-width: 600px; margin: 50px auto; background: rgba(26, 30, 42, 0.95); color: var(--glimt-gul); padding: 20px; border-radius: 8px; position: relative;">
-        <span onclick="document.getElementById('tips-modal').style.display='none'" style="cursor:pointer; float:right; font-size:24px;">&times;</span>
-        <h2 id="tips-tittel">TIPSENE TIL: </h2>
-        <div id="tips-innhold"></div>
+  <!-- SPYMODE MODAL (POPUP FOR Å SE ANDRES TIPS) -->
+  <div id="spy-modal" class="modal-overlay">
+    <div class="modal-boks">
+      <button class="modal-lukk" onclick="lukkSpyModal()">✕</button>
+      <h3 id="spy-tittel" style="color: var(--glimt-gul); margin-bottom: 5px;">Spillerens tips</h3>
+      <p id="spy-undertittel" style="font-size: 0.85rem; color: var(--dempet-tekst); margin-bottom: 15px;"></p>
+      <div id="spy-innhold">
+        <p style="text-align: center;">Henter tips...</p>
+      </div>
     </div>
   </div>
 
@@ -827,20 +866,29 @@
     });
 
     let aktivRunde = 1;
+    let harSattAutomatiskRunde = false;
 
     window.visTabellSeksjon = function() {
       document.getElementById('seksjon-tabell-tips').style.display = 'block';
       document.getElementById('seksjon-kamp-tips').style.display = 'none';
       document.getElementById('seksjon-leaderboard').style.display = 'none';
       document.getElementById('seksjon-om').style.display = 'none';
+      oppdaterAktivMenyIkon('nav-tabell');
       lastInnLiveTabell();
     }
 
-    window.visKampSeksjon = function() {
+    window.visKampSeksjon = async function() {
       document.getElementById('seksjon-tabell-tips').style.display = 'none';
       document.getElementById('seksjon-kamp-tips').style.display = 'block';
       document.getElementById('seksjon-leaderboard').style.display = 'none';
       document.getElementById('seksjon-om').style.display = 'none';
+      oppdaterAktivMenyIkon('nav-kamp');
+      
+      // Finn riktig aktuell runde automatisk første gang brukeren går inn på kamptips
+      if (!harSattAutomatiskRunde) {
+          aktivRunde = await finnAktuellRundeAutomatisk();
+          harSattAutomatiskRunde = true;
+      }
       lastInnKamperForRunde();
     }
 
@@ -849,6 +897,13 @@
       document.getElementById('seksjon-kamp-tips').style.display = 'none';
       document.getElementById('seksjon-leaderboard').style.display = 'none';
       document.getElementById('seksjon-om').style.display = 'block';
+      oppdaterAktivMenyIkon('nav-om');
+    }
+
+    function oppdaterAktivMenyIkon(aktivtId) {
+      document.querySelectorAll('.bunn-meny a').forEach(a => a.classList.remove('aktiv'));
+      const el = document.getElementById(aktivtId);
+      if (el) el.classList.add('aktiv');
     }
 
     function genererInvitasjonskode() {
@@ -961,6 +1016,11 @@
       }
     }
 
+    window.kopierInvitasjonskode = function() {
+      const kode = document.getElementById('vis-invitasjonskode').innerText;
+      navigator.clipboard.writeText(kode).then(() => alert("Kopiert! 📋"));
+    }
+
     window.sendEpostInvitasjon = function() {
       const kode = document.getElementById('vis-invitasjonskode').innerText;
       const avdelingsNavn = document.getElementById('vis-avdelingsnavn').innerText;
@@ -1058,13 +1118,11 @@
       } catch (error) { alert("Feil: " + error.message); }
     }
 
-    // --- LIVE-TABELL FUNKSJON (VISER ALLE LAG: SPILTE LAG MED FASIT, RESTEN ALFABETISK MED 0) ---
     async function lastInnLiveTabell() {
         const tbody = document.getElementById('live-tabell-innhold');
         if (!tbody) return;
 
         try {
-            // 1. Hent alle lag fra europa_lag i alfabetisk rekkefølge
             const { data: lagListe, error: lagError } = await supabase
                 .from('europa_lag')
                 .select('*')
@@ -1073,18 +1131,16 @@
             if (lagError) throw lagError;
 
             if (!lagListe || lagListe.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--dempet-tekst);">Ingen lag funnet i databasen.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--dempet-tekst);">Ingen lag funnet.</td></tr>`;
                 return;
             }
 
-            // 2. Hent offisiell tabell (for de lagene som har spilt)
             const { data: offisiellTabell, error: tabellError } = await supabase
                 .from('offisiell_tabell')
                 .select('*');
 
             if (tabellError) throw tabellError;
 
-            // Lag en oppslags-map for de lagene som har fått data i offisiell_tabell
             const tabellMap = {};
             if (offisiellTabell) {
                 offisiellTabell.forEach(rad => {
@@ -1092,7 +1148,6 @@
                 });
             }
 
-            // 3. Kombiner laglisten med eventuell offisiell statistikk
             const komplettTabell = lagListe.map(lag => {
                 const stats = tabellMap[lag.id] || {};
                 return {
@@ -1105,12 +1160,10 @@
                     maal_for: stats.maal_for || 0,
                     maal_imot: stats.maal_imot || 0,
                     poeng: stats.poeng || 0,
-                    // Bruk offisiell plassering hvis den finnes, ellers setter vi en midlertidig verdi
                     offisiell_plass: stats.plassering || 999
                 };
             });
 
-            // 4. Sorter tabellen: Først de med poeng/plassering, deretter alfabetisk på de med 0
             komplettTabell.sort((a, b) => {
                 if (a.poeng !== b.poeng) return b.poeng - a.poeng;
                 const mfA = a.maal_for - a.maal_imot;
@@ -1154,6 +1207,59 @@
             tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Kunne ikke laste live-tabell.</td></tr>`;
         }
     }
+
+    // Funksjon for å regne ut hvilken runde som skal vises som standard (2 dager etter siste kamp i runden)
+    async function finnAktuellRundeAutomatisk() {
+        try {
+            const { data: alleKamper, error } = await supabase
+                .from('europa_kamper')
+                .select('runde, kamp_dato')
+                .order('runde', { ascending: true });
+
+            if (error || !alleKamper || alleKamper.length === 0) return 1;
+
+            // Grupper kamper per runde
+            const runderMap = {};
+            alleKamper.forEach(k => {
+                if (!runderMap[k.runde]) runderMap[k.runde] = [];
+                if (k.kamp_dato) runderMap[k.runde].push(new Date(k.kamp_dato.replace(' ', 'T')));
+            });
+
+            const na = new Date();
+            let anbefaltRunde = 1;
+
+            // Gå gjennom rundene fra 1 og oppover
+            for (let r = 1; r <= 8; r++) {
+                const datoer = runderMap[r];
+                if (!datoer || datoer.length === 0) continue;
+
+                // Finn den seneste kampdatoen i denne runden
+                const sisteKampDato = new Date(Math.max(...datoer.map(d => d.getTime())));
+
+                // Legg til 2 dager (2 * 24 * 60 * 60 * 1000 millisekunder)
+                const toDagerEtterSisteKamp = new Date(sisteKampDato.getTime() + (2 * 24 * 60 * 60 * 1000));
+
+                if (na < toDagerEtterSisteKamp) {
+                    // Vi er fremdeles før eller innenfor 2 dager etter denne runden, så dette er den aktive runden!
+                    anbefaltRunde = r;
+                    break;
+                } else {
+                    // Hvis det har gått mer enn 2 dager siden denne runden, sett foreløpig til neste runde
+                    anbefaltRunde = r + 1;
+                }
+            }
+
+            // Sørg for at vi ikke hopper over maks antall runder som finnes
+            const maksRunde = Math.max(...Object.keys(runderMap).map(Number));
+            if (anbefaltRunde > maksRunde) anbefaltRunde = maksRunde;
+
+            return anbefaltRunde;
+        } catch (err) {
+            console.error("Feil ved utregning av aktuell runde:", err);
+            return 1;
+        }
+    }
+
     async function lastInnKamperForRunde() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -1170,7 +1276,7 @@
       try {
           const { data: kamper, error: kampError } = await supabase
               .from('europa_kamper')
-              .select('id, runde, kamp_dato, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn)')
+              .select('id, runde, kamp_dato, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn), fasit_hjemme, fasit_borte')
               .eq('runde', aktivRunde);
               
           if (kampError) throw kampError;
@@ -1186,75 +1292,73 @@
           const tipsMap = {};
           if (tipsTabell) tipsTabell.forEach(t => tipsMap[t.kamp_id] = { hjemme: t.tippet_hjemmemaal, borte: t.tippet_bortemaal });
           
-          const nå = new Date();
+          container.innerHTML = kamper.map((kamp, index) => {
+              const tHjemme = tipsMap[kamp.id] ? tipsMap[kamp.id].hjemme : '';
+              const tBorte = tipsMap[kamp.id] ? tipsMap[kamp.id].borte : '';
+              
+              const isoDato = kamp.kamp_dato ? kamp.kamp_dato.replace(' ', 'T') : '';
+              const kampDato = new Date(isoDato);
+              const na = new Date();
+              const erLaast = isNaN(kampDato) ? false : (na >= kampDato);
 
-         container.innerHTML = kamper.map((kamp, index) => {
-        const tHjemme = tipsMap[kamp.id] ? tipsMap[kamp.id].hjemme : '';
-        const tBorte = tipsMap[kamp.id] ? tipsMap[kamp.id].borte : '';
-        
-        const isoDato = kamp.kamp_dato ? kamp.kamp_dato.replace(' ', 'T') : '';
-        const kampDato = new Date(isoDato);
-        const na = new Date();
-        const erLaast = isNaN(kampDato) ? false : (na >= kampDato);
+              const formtertFrist = isNaN(kampDato) ? '' : kampDato.toLocaleDateString('no-NO', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+              });
 
-        const formtertFrist = isNaN(kampDato) ? '' : kampDato.toLocaleDateString('no-NO', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
+              let fasitHtml = '<div style="font-size: 0.8rem; height: 18px; margin: 2px 0;">';
+              if (kamp.fasit_hjemme !== null && kamp.fasit_hjemme !== undefined && 
+                  kamp.fasit_borte !== null && kamp.fasit_borte !== undefined) {
+                  fasitHtml += '<span style="color: #FFD700; font-weight: bold;">Fasit: ' + kamp.fasit_hjemme + ' - ' + kamp.fasit_borte + '</span>';
+              }
+              fasitHtml += '</div>';
 
-        let fasitHtml = '<div style="font-size: 0.8rem; height: 18px; margin: 2px 0;">';
-        if (kamp.fasit_hjemme !== null && kamp.fasit_hjemme !== undefined && 
-            kamp.fasit_borte !== null && kamp.fasit_borte !== undefined) {
-            fasitHtml += '<span style="color: #FFD700; font-weight: bold;">Fasit: ' + kamp.fasit_hjemme + ' - ' + kamp.fasit_borte + '</span>';
-        }
-        fasitHtml += '</div>';
+              let manglerTipsAdvarsel = '';
+              if (!erLaast && (tHjemme === '' || tBorte === '')) {
+                  manglerTipsAdvarsel = '<div style="font-size: 0.75rem; color: #ff6b6b; margin-top: 4px; font-weight: bold;">⚠️ Du har ikke tippet denne kampen enda!</div>';
+              }
 
-        let manglerTipsAdvarsel = '';
-        if (!erLaast && (tHjemme === '' || tBorte === '')) {
-            manglerTipsAdvarsel = '<div style="font-size: 0.75rem; color: #ff6b6b; margin-top: 4px; font-weight: bold;">⚠️ Du har ikke tippet denne kampen enda!</div>';
-        }
+              return `
+                  <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: ${(!erLaast && (tHjemme === '' || tBorte === '')) ? '1px solid #ff6b6b' : '1px solid rgba(255,255,255,0.1)'};">
+                      <div class="kamp-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                          <span>Kamp #${index + 1}</span>
+                          <span style="color: #aaa;">Frist: ${formtertFrist} ${erLaast ? '(Låst)' : ''}</span>
+                      </div>
+                      
+                      ${fasitHtml}
 
-        return `
-            <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: ${(!erLaast && (tHjemme === '' || tBorte === '')) ? '1px solid #ff6b6b' : '1px solid rgba(255,255,255,0.1)'};">
-                <div class="kamp-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
-                    <span>Kamp #${index + 1}</span>
-                    <span style="color: #aaa;">Frist: ${formtertFrist} ${erLaast ? '(Låst)' : ''}</span>
-                </div>
-                
-                ${fasitHtml}
-
-                <div class="kamp-innhold" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 4px;">
-                    <span style="flex: 1; text-align: right; min-height: 44px; display: flex; align-items: center; justify-content: flex-end;">${kamp.hjemmelag?.navn || kamp.hjemme_lag}</span>
-                    <input class="hjemme-input" type="number" value="${tHjemme !== undefined ? tHjemme : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
-                    <span>-</span>
-                    <input class="borte-input" type="number" value="${tBorte !== undefined ? tBorte : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
-                    <span style="flex: 1; text-align: left; min-height: 44px; display: flex; align-items: center; justify-content: flex-start;">${kamp.bortelag?.navn || kamp.borte_lag}</span>
-                </div>
-                ${manglerTipsAdvarsel}
-            </div>`;
-    }).join('');
-} catch (error) { 
-    console.error(error); 
-    container.innerHTML = '<p style="color:red;">Kunne ikke laste kamper.</p>';
-}
-}
-
-window.forrigeRunde = function() { if (aktivRunde > 1) { aktivRunde--; lastInnKamperForRunde(); } }
-window.nesteRunde = function() { if (aktivRunde < 8) { aktivRunde++; lastInnKamperForRunde(); } }
-
-window.lagreRundensKamptips = async function() {
-const { data: { user } } = await supabase.auth.getUser();
-const kampKortene = document.querySelectorAll('.kamp-kort');
-const tipsOppdateringer = [];
-kampKortene.forEach(kort => {
-    const hVerdi = kort.querySelector('.hjemme-input').value.trim();
-    const bVerdi = kort.querySelector('.borte-input').value.trim();
-    if (hVerdi !== "" && bVerdi !== "") {
-        tipsOppdateringer.push({ profil_id: user.id, kamp_id: parseInt(kort.getAttribute('data-kamp-id')), tippet_hjemmemaal: parseInt(hVerdi), tippet_bortemaal: parseInt(bVerdi) });
+                      <div class="kamp-innhold" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 4px;">
+                          <span style="flex: 1; text-align: right; min-height: 44px; display: flex; align-items: center; justify-content: flex-end;">${kamp.hjemmelag?.navn || ''}</span>
+                          <input class="hjemme-input" type="number" value="${tHjemme !== undefined ? tHjemme : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
+                          <span>-</span>
+                          <input class="borte-input" type="number" value="${tBorte !== undefined ? tBorte : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
+                          <span style="flex: 1; text-align: left; min-height: 44px; display: flex; align-items: center; justify-content: flex-start;">${kamp.bortelag?.navn || ''}</span>
+                      </div>
+                      ${manglerTipsAdvarsel}
+                  </div>`;
+          }).join('');
+      } catch (error) { 
+          console.error(error); 
+          container.innerHTML = '<p style="color:red;">Kunne ikke laste kamper.</p>';
+      }
     }
-});
+
+    window.forrigeRunde = function() { if (aktivRunde > 1) { aktivRunde--; lastInnKamperForRunde(); } }
+    window.nesteRunde = function() { if (aktivRunde < 8) { aktivRunde++; lastInnKamperForRunde(); } }
+
+    window.lagreRundensKamptips = async function() {
+      const { data: { user } } = await supabase.auth.getUser();
+      const kampKortene = document.querySelectorAll('.kamp-kort');
+      const tipsOppdateringer = [];
+      kampKortene.forEach(kort => {
+          const hVerdi = kort.querySelector('.hjemme-input').value.trim();
+          const bVerdi = kort.querySelector('.borte-input').value.trim();
+          if (hVerdi !== "" && bVerdi !== "") {
+              tipsOppdateringer.push({ profil_id: user.id, kamp_id: parseInt(kort.getAttribute('data-kamp-id')), tippet_hjemmemaal: parseInt(hVerdi), tippet_bortemaal: parseInt(bVerdi) });
+          }
+      });
       try {
           const { error } = await supabase.from('spiller_kamp_tips').upsert(tipsOppdateringer, { onConflict: 'profil_id, kamp_id' });
           if (error) throw error;
@@ -1268,13 +1372,13 @@ kampKortene.forEach(kort => {
       const authContainer = document.getElementById('auth-container');
       const spillSeksjon = document.getElementById('spill-seksjon');
       const loggUtKnapp = document.getElementById('logg-ut-knapp');
+      const bunnMeny = document.getElementById('bunn-meny');
 
       if (user) {
         if (authContainer) authContainer.style.display = 'none';
         if (spillSeksjon) spillSeksjon.style.display = 'block';
         if (loggUtKnapp) loggUtKnapp.style.display = 'block';
-
-        await window.oppdaterAlleSpillerPoengUtenAlert();
+        if (bunnMeny) bunnMeny.style.display = 'flex';
 
         const { data: profil } = await supabase
           .from('profiles')
@@ -1294,28 +1398,18 @@ kampKortene.forEach(kort => {
           lastInnLiveTabell();
         }
 
-        window.visLeaderboard();
-// KJØR VARSELSJEKK HER:
-sjekkOmBrukerManglerTips(user.id);
+        window.visKampSeksjon();
+        sjekkOmBrukerManglerTips(user.id);
       } else {
         if (authContainer) authContainer.style.display = 'flex';
         if (spillSeksjon) spillSeksjon.style.display = 'none';
         if (loggUtKnapp) loggUtKnapp.style.display = 'none';
+        if (bunnMeny) bunnMeny.style.display = 'none';
         
         document.getElementById('login-skjema').style.display = 'block';
         document.getElementById('registrer-skjema').style.display = 'none';
       }
     }
-
-    window.beregnPoeng = function(tippetH, tippetB, fasitH, fasitB) {
-        let p = 0;
-        const tippetRes = tippetH === tippetB ? 'U' : (tippetH > tippetB ? 'H' : 'B');
-        const fasitRes = fasitH === fasitB ? 'U' : (fasitH > fasitB ? 'H' : 'B');
-        if (tippetRes === fasitRes) p += 2;
-        if (tippetH === fasitH) p += 1;
-        if (tippetB === fasitB) p += 1;
-        return p;
-    };
 
     window.visLeaderboard = async function(type = 'total') {
         const seksjon = document.getElementById('seksjon-leaderboard');
@@ -1324,6 +1418,7 @@ sjekkOmBrukerManglerTips(user.id);
         document.getElementById('seksjon-tabell-tips').style.display = 'none';
         document.getElementById('seksjon-kamp-tips').style.display = 'none';
         document.getElementById('seksjon-om').style.display = 'none';
+        oppdaterAktivMenyIkon('nav-leaderboard');
 
         const liste = document.getElementById('leaderboard-liste');
         if (liste) liste.innerHTML = "Henter data...";
@@ -1364,7 +1459,7 @@ sjekkOmBrukerManglerTips(user.id);
         return `
             <tr style="${bakgrunnstil}">
                 <td>${i + 1}.</td>
-                <td style="cursor: pointer; color: var(--glimt-gul);" onclick="window.hentOgVisTips('${b.id}', '${b.brukernavn}')">
+                <td style="cursor: pointer; color: var(--glimt-gul); text-decoration: underline;" onclick="hentOgVisTips('${b.id}', '${b.brukernavn}')">
                     ${b.brukernavn} ${erMinRad ? '(Du)' : ''}
                 </td>
                 <td>${b.kamp_poeng || 0}</td>
@@ -1374,138 +1469,172 @@ sjekkOmBrukerManglerTips(user.id);
         `;
     }
 
-    window.oppdaterAlleSpillerPoengUtenAlert = async function() {
-        const { data: utregnetTabell } = await supabase.from('offisiell_tabell').select('*');
-        if (utregnetTabell && utregnetTabell.length > 0) {
-            for (let rad of utregnetTabell) {
-                await supabase.from('europa_lag').update({ fasit_plassering: rad.plassering }).eq('id', rad.lag_id);
+    // SPYMODE: Hent og vis en annen spillers tips
+    window.hentOgVisTips = async function(profilId, brukernavn) {
+        const modal = document.getElementById('spy-modal');
+        const tittel = document.getElementById('spy-tittel');
+        const undertittel = document.getElementById('spy-undertittel');
+        const innhold = document.getElementById('spy-innhold');
+
+        if (!modal) return;
+
+        tittel.innerText = `Spionerer på: ${brukernavn}`;
+        undertittel.innerText = `Her er oversikten over ${brukernavn}s lag- og kamptips.`;
+        innhold.innerHTML = `<p style="text-align: center; color: var(--dempet-tekst);">Henter tips fra databasen...</p>`;
+        modal.style.display = 'flex';
+
+        try {
+            // Hent tabelltips
+            const { data: tabellTips } = await supabase
+                .from('spiller_tips')
+                .select('tippet_plassering, lag_id, europa_lag(navn)')
+                .eq('profil_id', profilId)
+                .order('tippet_plassering', { ascending: true });
+
+            // Hent kamptips
+            const { data: kampTips } = await supabase
+                .from('spiller_kamp_tips')
+                .select('tippet_hjemmemaal, tippet_bortemaal, kamp_id, europa_kamper(runde, hjemmelag:europa_lag!hjemmelag_id(navn), bortelag:europa_lag!bortelag_id(navn))')
+                .eq('profil_id', profilId);
+
+            let html = '<h4 style="color:var(--glimt-gul); margin-bottom:8px;">Tabelltips:</h4>';
+            if (!tabellTips || tabellTips.length === 0) {
+                html += '<p style="color:var(--dempet-tekst); font-size:0.9rem; margin-bottom:15px;">Ingen tabelltips registrert.</p>';
+            } else {
+                html += '<ul style="padding-left: 20px; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.4;">';
+                tabellTips.forEach(t => {
+                    const lagNavn = t.europa_lag ? t.europa_lag.navn : 'Ukjent lag';
+                    html += `<li><b>${t.tippet_plassering}.</b> ${lagNavn}</li>`;
+                });
+                html += '</ul>';
             }
+
+            html += '<h4 style="color:var(--glimt-gul); margin-bottom:8px;">Kamptips:</h4>';
+            if (!kampTips || kampTips.length === 0) {
+                html += '<p style="color:var(--dempet-tekst); font-size:0.9rem;">Ingen kamptips registrert.</p>';
+            } else {
+                html += '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;">';
+                kampTips.forEach(kt => {
+                    const k = kt.europa_kamper;
+                    if (k) {
+                        const hjemmeNavn = k.hjemmelag ? k.hjemmelag.navn : '?';
+                        const borteNavn = k.bortelag ? k.bortelag.navn : '?';
+                        html += `<div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span>Runde ${k.runde}: ${hjemmeNavn} - ${borteNavn}</span>
+                            <b style="color: var(--glimt-gul);">${kt.tippet_hjemmemaal} - ${kt.tippet_bortemaal}</b>
+                        </div>`;
+                    }
+                });
+                html += '</div>';
+            }
+
+            innhold.innerHTML = html;
+        } catch (err) {
+            console.error("Feil ved henting av spytips:", err);
+            innhold.innerHTML = `<p style="color: red; text-align: center;">Kunne ikke laste tips.</p>`;
         }
     };
 
-    sjekkBrukerStatusOgLastInn();
-    // Funksjon for å styre de røde prikkene
-function oppdaterVarselPrikker(manglerKamptips, manglerTabelltips) {
-    const prikkKamp = document.getElementById('prikk-kamptips');
-    const prikkTabell = document.getElementById('prikk-tabelltips');
+    window.lukkSpyModal = function() {
+        const modal = document.getElementById('spy-modal');
+        if (modal) modal.style.display = 'none';
+    };
 
-    // Vis eller skjul prikk for kamptips
-    if (prikkKamp) {
-        prikkKamp.style.display = manglerKamptips ? 'inline-block' : 'none';
+    function oppdaterVarselPrikker(manglerKamptips, manglerTabelltips) {
+        const prikkKamp = document.getElementById('prikk-kamptips');
+        const prikkTabell = document.getElementById('prikk-tabelltips');
+
+        if (prikkKamp) prikkKamp.style.display = manglerKamptips ? 'inline-block' : 'none';
+        if (prikkTabell) prikkTabell.style.display = manglerTabelltips ? 'inline-block' : 'none';
     }
 
-    // Vis eller skjul prikk for tabelltips
-    if (prikkTabell) {
-        prikkTabell.style.display = manglerTabelltips ? 'inline-block' : 'none';
-    }
-}
-async function sjekkOmBrukerManglerTips(userId) {
-    try {
-        let manglerKamptips = false;
-        let manglerTabelltips = false;
+    async function sjekkOmBrukerManglerTips(userId) {
+        try {
+            let manglerTabelltips = false;
+            const { data: tabellTips, error: tabellError } = await supabase
+                .from('spiller_tips')
+                .select('*')
+                .eq('profil_id', userId);
 
-        // 1. SJEKK TABELLTIPS (Frist 8. september 2026)
-        // Sjekk om brukeren har lagret tabelltips i din tabell (f.eks. 'spiller_tips')
-        const { data: tabellTips, error: tabellError } = await supabase
-    .from('spiller_tips')
-    .select('*')
-    .eq('profil_id', userId); // (Pass på om kolonnen heter user_id eller profil_id i databasen din. Resten av koden din bruker profil_id).
-
-        if (!tabellError) {
-            // Hvis brukeren ikke har lagret noen rader, og fristen ikke har gått ut:
-            const frist = new Date('2026-09-08T23:59:59');
-            const na = new Date();
-            if ((!tabellTips || tabellTips.length === 0) && na < frist) {
-                manglerTabelltips = true;
+            if (!tabellError) {
+                const frist = new Date('2026-09-08T23:59:59');
+                const na = new Date();
+                if ((!tabellTips || tabellTips.length === 0) && na < frist) {
+                    manglerTabelltips = true;
+                }
             }
+            oppdaterVarselPrikker(false, manglerTabelltips);
+        } catch (err) {
+            console.error("Feil ved sjekk av varsler:", err);
         }
-
-        // 2. SJEKK KAMPTIPS (F.eks. kamper som starter i dag/snart der bruker mangler tips)
-        // Her kan du sjekke tabellen din for kamptips ('spiller_kamp_tips')
-        // (Hvis du vil kan vi tilpasse denne nøyaktig slik din kamp-tabell heter)
-
-        // 3. OPPDATER PRIKKENE I BUNNMENYEN
-        oppdaterVarselPrikker(manglerKamptips, manglerTabelltips);
-
-    } catch (err) {
-        console.error("Feil ved sjekk av varsler:", err);
     }
-}
-// Sveip-funksjonalitet for hovedmenyen
-let touchStartX = 0;
-let touchStartY = 0;
-const minSwipeDistance = 70;
 
-document.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-}, { passive: true });
+    // Sveip-funksjonalitet for mobilnavigasjon
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const minSwipeDistance = 70;
 
-document.addEventListener('touchend', e => {
-    const touchEndX = e.changedTouches[0].screenX;
-    const touchEndY = e.changedTouches[0].screenY;
-    
-    const diffX = touchEndX - touchStartX;
-    const diffY = touchEndY - touchStartY;
+    document.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
 
-    if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffX) > Math.abs(diffY)) {
-        // Definer rekkefølgen på sidene i en liste
-        const sider = [
-            () => visKampSeksjon(),
-            () => visTabellSeksjon(),
-            () => visLeaderboard('total'),
-            () => visOmSeksjon()
-        ];
-
-        // Finn ut hvilken side som er aktiv basert på en ID eller en aktiv-klasse på bunnmenyen
-        // Her sjekker vi hvilken lenke som har en aktiv-klasse, eller vi kan gjette ut fra hvilken funksjon som sist ble kjørt.
-        // Enkleste sjekk: Finn den lenken som har klasse 'active' eller 'aktiv'. 
-        // (Husk å legge til class="aktiv" på den lenken som er aktiv når du bytter side!)
-        const aktivLenke = document.querySelector('.bunn-meny a.aktiv, .bunn-meny a.active');
-        const alleLenker = Array.from(document.querySelectorAll('.bunn-meny a'));
+    document.addEventListener('touchend', e => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
         
-        let aktivIndex = alleLenker.indexOf(aktivLenke);
-        if (aktivIndex === -1) aktivIndex = 0; // Standard til første (Kamptips) om ingen har klasse
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
 
-        if (diffX < 0) {
-            // Sveipet venstre -> Gå til neste side
-            if (aktivIndex < sider.length - 1) {
+        if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffX) > Math.abs(diffY)) {
+            const sider = [
+                () => visKampSeksjon(),
+                () => visTabellSeksjon(),
+                () => visLeaderboard('total'),
+                () => visOmSeksjon()
+            ];
+
+            const aktivLenke = document.querySelector('.bunn-meny a.aktiv');
+            const alleLenker = Array.from(document.querySelectorAll('.bunn-meny a'));
+            
+            let aktivIndex = alleLenker.indexOf(aktivLenke);
+            if (aktivIndex === -1) aktivIndex = 0;
+
+            if (diffX < 0 && aktivIndex < sider.length - 1) {
                 sider[aktivIndex + 1]();
-            }
-        } else {
-            // Sveipet høyre -> Gå til forrige side
-            if (aktivIndex > 0) {
+            } else if (diffX > 0 && aktivIndex > 0) {
                 sider[aktivIndex - 1]();
             }
         }
-    }
-}, { passive: true });
+    }, { passive: true });
+
+    sjekkBrukerStatusOgLastInn();
   </script>
 
-<!-- BUNNMENY FOR MOBIL -->
-<nav class="bunn-meny" id="bunn-meny">
-  <a href="#" id="nav-kamp" onclick="visKampSeksjon()" style="position: relative;">
-    <span id="prikk-kamptips" class="rod-prikk" style="display: none;"></span>
-    <span class="ikon">⚽</span>
-    <span>Kamptips</span>
-  </a>
-  
-  <a href="#" id="nav-tabell" onclick="visTabellSeksjon()" style="position: relative;">
-    <span id="prikk-tabelltips" class="rod-prikk" style="display: none;"></span>
-    <span class="ikon">📋</span>
-    <span>Tabelltips</span>
-  </a>
-  
-  <a href="#" id="nav-leaderboard" onclick="visLeaderboard('total')" style="position: relative;">
-    <span class="ikon">🏆</span>
-    <span>Tabell</span>
-  </a>
-  
-  <a href="#" id="nav-om" onclick="visOmSeksjon()" style="position: relative;">
-    <span class="ikon">ℹ️</span>
-    <span>Om spillet</span>
-  </a>
-</nav>
+  <!-- BUNNMENY FOR MOBIL -->
+  <nav class="bunn-meny" id="bunn-meny" style="display: none;">
+    <a href="#" id="nav-kamp" onclick="visKampSeksjon()" style="position: relative;">
+      <span id="prikk-kamptips" class="rod-prikk" style="display: none;"></span>
+      <span class="ikon">⚽</span>
+      <span>Kamptips</span>
+    </a>
+    
+    <a href="#" id="nav-tabell" onclick="visTabellSeksjon()" style="position: relative;">
+      <span id="prikk-tabelltips" class="rod-prikk" style="display: none;"></span>
+      <span class="ikon">📋</span>
+      <span>Tabelltips</span>
+    </a>
+    
+    <a href="#" id="nav-leaderboard" onclick="visLeaderboard('total')" style="position: relative;">
+      <span class="ikon">🏆</span>
+      <span>Tabell</span>
+    </a>
+    
+    <a href="#" id="nav-om" onclick="visOmSeksjon()" style="position: relative;">
+      <span class="ikon">ℹ️</span>
+      <span>Om spillet</span>
+    </a>
+  </nav>
 
 </body>
 </html>
