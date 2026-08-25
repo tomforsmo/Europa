@@ -457,6 +457,17 @@
       body {
         padding-bottom: 70px; 
       }
+      /* Legg til denne for de røde varsel-prikkene på bunnmenyen */
+.rod-prikk {
+    position: absolute;
+    top: 4px;
+    right: 32%;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+    border: 2px solid #121212; /* Matcher bakgrunnsfargen på menyen for en fin kant */
+}
     }
 
     .live-tabell-container {
@@ -1284,7 +1295,8 @@ kampKortene.forEach(kort => {
         }
 
         window.visLeaderboard();
-
+// KJØR VARSELSJEKK HER:
+sjekkOmBrukerManglerTips(user.id);
       } else {
         if (authContainer) authContainer.style.display = 'flex';
         if (spillSeksjon) spillSeksjon.style.display = 'none';
@@ -1394,10 +1406,10 @@ async function sjekkOmBrukerManglerTips(userId) {
 
         // 1. SJEKK TABELLTIPS (Frist 8. september 2026)
         // Sjekk om brukeren har lagret tabelltips i din tabell (f.eks. 'spiller_tips')
-        const { data: tabellTips, error: tabellError } = await supabaseClient
-            .from('spiller_tips')
-            .select('*')
-            .eq('user_id', userId);
+        const { data: tabellTips, error: tabellError } = await supabase
+    .from('spiller_tips')
+    .select('*')
+    .eq('profil_id', userId); // (Pass på om kolonnen heter user_id eller profil_id i databasen din. Resten av koden din bruker profil_id).
 
         if (!tabellError) {
             // Hvis brukeren ikke har lagret noen rader, og fristen ikke har gått ut:
@@ -1419,10 +1431,10 @@ async function sjekkOmBrukerManglerTips(userId) {
         console.error("Feil ved sjekk av varsler:", err);
     }
 }
-// Sveip-funksjonalitet for å bytte mellom hovedsidene (bunnmenyen)
+// Sveip-funksjonalitet for hovedmenyen
 let touchStartX = 0;
 let touchStartY = 0;
-const minSwipeDistance = 70; // Hvor langt man må sveipe (i piksler)
+const minSwipeDistance = 70;
 
 document.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
@@ -1436,51 +1448,60 @@ document.addEventListener('touchend', e => {
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
 
-    // Sjekk at det er et horisontalt sveip (at man ikke bare scroller opp/ned på siden)
     if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffX) > Math.abs(diffY)) {
-        // Finn alle knappene/lenkene i bunnmenyen din 
-        // (Bytt ut '.bunnmeny button' med den klassen eller velgeren du bruker for knappene i bunnen)
-        const navKnapper = Array.from(document.querySelectorAll('nav button, footer button, .bunnmeny button, .nav-item'));
-        
-        if (navKnapper.length > 0) {
-            // Finn hvilken knapp som er aktiv nå (eller den første hvis ingen har en egen aktiv-klasse)
-            let aktivIndex = navKnapper.findIndex(knapp => knapp.classList.contains('active') || knapp.classList.contains('aktiv') || knapp.style.color !== '');
-            
-            if (aktivIndex === -1) aktivIndex = 0; // Standard til første hvis vi ikke finner aktiv
+        // Definer rekkefølgen på sidene i en liste
+        const sider = [
+            () => visKampSeksjon(),
+            () => visTabellSeksjon(),
+            () => visLeaderboard('total'),
+            () => visOmSeksjon()
+        ];
 
-            if (diffX < 0) {
-                // Sveipet venstre -> Gå til neste side (hvis den finnes)
-                if (aktivIndex < navKnapper.length - 1) {
-                    navKnapper[aktivIndex + 1].click();
-                }
-            } else {
-                // Sveipet høyre -> Gå til forrige side (hvis den finnes)
-                if (aktivIndex > 0) {
-                    navKnapper[aktivIndex - 1].click();
-                }
+        // Finn ut hvilken side som er aktiv basert på en ID eller en aktiv-klasse på bunnmenyen
+        // Her sjekker vi hvilken lenke som har en aktiv-klasse, eller vi kan gjette ut fra hvilken funksjon som sist ble kjørt.
+        // Enkleste sjekk: Finn den lenken som har klasse 'active' eller 'aktiv'. 
+        // (Husk å legge til class="aktiv" på den lenken som er aktiv når du bytter side!)
+        const aktivLenke = document.querySelector('.bunn-meny a.aktiv, .bunn-meny a.active');
+        const alleLenker = Array.from(document.querySelectorAll('.bunn-meny a'));
+        
+        let aktivIndex = alleLenker.indexOf(aktivLenke);
+        if (aktivIndex === -1) aktivIndex = 0; // Standard til første (Kamptips) om ingen har klasse
+
+        if (diffX < 0) {
+            // Sveipet venstre -> Gå til neste side
+            if (aktivIndex < sider.length - 1) {
+                sider[aktivIndex + 1]();
+            }
+        } else {
+            // Sveipet høyre -> Gå til forrige side
+            if (aktivIndex > 0) {
+                sider[aktivIndex - 1]();
             }
         }
     }
 }, { passive: true });
   </script>
 
- <!-- BUNNMENY FOR MOBIL -->
- <nav class="bunn-meny" id="bunn-meny">
+<!-- BUNNMENY FOR MOBIL -->
+<nav class="bunn-meny" id="bunn-meny">
   <a href="#" id="nav-kamp" onclick="visKampSeksjon()" style="position: relative;">
     <span id="prikk-kamptips" class="rod-prikk" style="display: none;"></span>
     <span class="ikon">⚽</span>
     <span>Kamptips</span>
   </a>
+  
   <a href="#" id="nav-tabell" onclick="visTabellSeksjon()" style="position: relative;">
     <span id="prikk-tabelltips" class="rod-prikk" style="display: none;"></span>
     <span class="ikon">📋</span>
     <span>Tabelltips</span>
   </a>
-  <a href="#" id="nav-leaderboard" onclick="visLeaderboard('total')">
+  
+  <a href="#" id="nav-leaderboard" onclick="visLeaderboard('total')" style="position: relative;">
     <span class="ikon">🏆</span>
     <span>Tabell</span>
   </a>
-  <a href="#" id="nav-om" onclick="visOmSeksjon()">
+  
+  <a href="#" id="nav-om" onclick="visOmSeksjon()" style="position: relative;">
     <span class="ikon">ℹ️</span>
     <span>Om spillet</span>
   </a>
