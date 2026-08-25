@@ -1419,7 +1419,49 @@ async function sjekkOmBrukerManglerTips(userId) {
         console.error("Feil ved sjekk av varsler:", err);
     }
 }
+// Sveip-funksjonalitet for å bytte mellom hovedsidene (bunnmenyen)
+let touchStartX = 0;
+let touchStartY = 0;
+const minSwipeDistance = 70; // Hvor langt man må sveipe (i piksler)
 
+document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+
+    // Sjekk at det er et horisontalt sveip (at man ikke bare scroller opp/ned på siden)
+    if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffX) > Math.abs(diffY)) {
+        // Finn alle knappene/lenkene i bunnmenyen din 
+        // (Bytt ut '.bunnmeny button' med den klassen eller velgeren du bruker for knappene i bunnen)
+        const navKnapper = Array.from(document.querySelectorAll('nav button, footer button, .bunnmeny button, .nav-item'));
+        
+        if (navKnapper.length > 0) {
+            // Finn hvilken knapp som er aktiv nå (eller den første hvis ingen har en egen aktiv-klasse)
+            let aktivIndex = navKnapper.findIndex(knapp => knapp.classList.contains('active') || knapp.classList.contains('aktiv') || knapp.style.color !== '');
+            
+            if (aktivIndex === -1) aktivIndex = 0; // Standard til første hvis vi ikke finner aktiv
+
+            if (diffX < 0) {
+                // Sveipet venstre -> Gå til neste side (hvis den finnes)
+                if (aktivIndex < navKnapper.length - 1) {
+                    navKnapper[aktivIndex + 1].click();
+                }
+            } else {
+                // Sveipet høyre -> Gå til forrige side (hvis den finnes)
+                if (aktivIndex > 0) {
+                    navKnapper[aktivIndex - 1].click();
+                }
+            }
+        }
+    }
+}, { passive: true });
   </script>
 
  <!-- BUNNMENY FOR MOBIL -->
