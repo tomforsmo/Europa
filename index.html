@@ -1274,15 +1274,19 @@
       container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper...</p>';
       
       try {
-          const { data: kamper, error: kampError } = await supabase
+          // 1. Hent alle kamper for runden
+          const { data: alleKamperISesongen, error: kampError } = await supabase
               .from('europa_kamper')
-              .select('id, runde, kamp_dato, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn), fasit_hjemme, fasit_borte')
+              .select('id, runde, kamp_dato, is_featured, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn), fasit_hjemme, fasit_borte')
               .eq('runde', aktivRunde);
               
           if (kampError) throw kampError;
           
+          // 2. Filtrer ut kun de som er huket av som 'is_featured'
+          const kamper = (alleKamperISesongen || []).filter(kamp => kamp.is_featured === true);
+          
           if (!kamper || kamper.length === 0) {
-              container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Ingen kamper registrert for denne runden.</p>';
+              container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Ingen utvalgte kamper registrert for denne runden.</p>';
               return;
           }
           
