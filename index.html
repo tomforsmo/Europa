@@ -719,7 +719,7 @@
       <div id="seksjon-tabell-tips" style="display: none;">
         <div class="avdelings-kort">
           <h3>Tipp tabellen for Europa</h3>
-          <p class="hjelpetekst">Hold og dra i lagene for å flytte dem opp og ned i din tabell.</p>
+          <p class="hjelpetekst">Hold og dra i lagene for å flytte dem opp og ned i din tabell. Husk å lagre før du går videre.</p>
           <div id="lag-tippe-liste" class="drag-liste">
             <p style="text-align: center; color: var(--dempet-tekst);">Laster lag...</p>
           </div>
@@ -759,7 +759,7 @@
       <div id="seksjon-kamp-tips" style="display: none;">
         <div class="avdelings-kort">
           <h3>Tipp kampresultater</h3>
-          <p class="hjelpetekst">Sveip eller klikk deg gjennom rundene for å tippe enkeltkamper.</p>
+          <p class="hjelpetekst">klikk deg gjennom rundene for å tippe på kamper. Husk å lagre før du går til neste runde.</p>
 
           <div class="runde-svelger">
             <button id="forrige-runde-btn" class="runde-svelger-knapp" onclick="forrigeRunde()">◀</button>
@@ -1325,7 +1325,7 @@
               }
 
               return `
-                  <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: ${(!erLaast && (tHjemme === '' || tBorte === '')) ? '1px solid #ff6b6b' : '1px solid rgba(255,255,255,0.1)'};">
+              <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: 1px solid rgba(255,255,255,0.1);">
                       <div class="kamp-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
                           <span>Kamp #${index + 1}</span>
                           <span style="color: #aaa;">Frist: ${formtertFrist} ${erLaast ? '(Låst)' : ''}</span>
