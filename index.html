@@ -1368,6 +1368,9 @@
           const { error } = await supabase.from('spiller_kamp_tips').upsert(tipsOppdateringer, { onConflict: 'profil_id, kamp_id' });
           if (error) throw error;
           alert("Kamptips lagret!");
+          
+          // Oppdater listen umiddelbart så røde varsler forsvinner med en gang
+          await lastInnKamperForRunde();
       } catch (error) { alert("Feil: " + error.message); }
     }
 
