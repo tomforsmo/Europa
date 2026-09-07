@@ -1072,16 +1072,74 @@
     function settOppDragAndDrop() {
       const container = document.getElementById('lag-tippe-liste');
       const elementer = container.querySelectorAll('.drag-element');
+
+      // --- DESKTOP (HTML5 DRAG & DROP) ---
       elementer.forEach(el => {
-          el.addEventListener('dragstart', () => el.classList.add('dragging'));
-          el.addEventListener('dragend', () => { el.classList.remove('dragging'); oppdaterPlasseringstall(); });
+          el.removeEventListener('dragstart', el._dragStartHandler);
+          el.removeEventListener('dragend', el._dragEndHandler);
+
+          el._dragStartHandler = () => el.classList.add('dragging');
+          el._dragEndHandler = () => { el.classList.remove('dragging'); oppdaterPlasseringstall(); };
+
+          el.addEventListener('dragstart', el._dragStartHandler);
+          el.addEventListener('dragend', el._dragEndHandler);
       });
-      container.addEventListener('dragover', e => {
-          e.preventDefault();
-          const etterElement = finnDragOverPlassering(container, e.clientY);
-          const dragObjekt = document.querySelector('.dragging');
-          if (etterElement == null) container.appendChild(dragObjekt);
-          else container.insertBefore(dragObjekt, etterElement);
+
+      if (!container._dragOverInitialized) {
+          container._dragOverInitialized = true;
+          container.addEventListener('dragover', e => {
+              e.preventDefault();
+              const etterElement = finnDragOverPlassering(container, e.clientY);
+              const dragObjekt = document.querySelector('.dragging');
+              if (dragObjekt) {
+                  if (etterElement == null) container.appendChild(dragObjekt);
+                  else container.insertBefore(dragObjekt, etterElement);
+              }
+          });
+      }
+
+      // --- MOBIL & TOUCH-STØTTE (iPhone / Android) ---
+      elementer.forEach(el => {
+          if (el._touchStartHandler) el.removeEventListener('touchstart', el._touchStartHandler);
+
+          let aktivtElement = null;
+
+          el._touchStartHandler = function(e) {
+              aktivtElement = el;
+              aktivtElement.classList.add('dragging');
+          };
+
+          el._touchMoveHandler = function(e) {
+              if (!aktivtElement) return;
+              e.preventDefault(); // Hindrer at nettsiden scroller mens du drar
+
+              const touch = e.touches[0];
+              const y = touch.clientY;
+              
+              const etterElement = finnDragOverPlassering(container, y);
+              if (etterElement == null) {
+                  container.appendChild(aktivtElement);
+              } else {
+                  container.insertBefore(aktivtElement, etterElement);
+              }
+              oppdaterPlasseringstall();
+          };
+
+          el._touchEndHandler = function() {
+              if (!aktivtElement) return;
+              aktivtElement.classList.remove('dragging');
+              aktivtElement = null;
+              oppdaterPlasseringstall();
+              
+              window.removeEventListener('touchmove', el._touchMoveHandler);
+              window.removeEventListener('touchend', el._touchEndHandler);
+          };
+
+          el.addEventListener('touchstart', (e) => {
+              el._touchStartHandler(e);
+              window.addEventListener('touchmove', el._touchMoveHandler, { passive: false });
+              window.addEventListener('touchend', el._touchEndHandler);
+          }, { passive: true });
       });
     }
 
