@@ -670,7 +670,7 @@
 
         <h3 style="font-size: 1.1rem; margin-top: 20px;">Frister</h3>
         <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
-          <li><strong style="color: var(--lys-tekst);">Tabelltips:</strong> Fristen er satt til 8. september – da starter Champions League.</li>
+          <li><strong style="color: var(--lys-tekst);">Tabelltips:</strong> Fristen er satt til 15. september – da starter Champions League.</li>
           <li><strong style="color: var(--lys-tekst);">Kamptips:</strong> Fristen for å registrere eller endre tips er ved kampstart (kampene låses automatisk når avspark går).</li>
         </ul>
       </div>
@@ -1057,15 +1057,36 @@
               if (plassB) return 1;
               return a.navn.localeCompare(b.navn);
           });
+
+          // Sjekk om fristen (15. september 2026) har utløpt
+          const låseDato = new Date('2026-09-15T00:00:00');
+          const erLaast = new Date() >= låseDato;
+
+          // Skjul lagre-knappen hvis fristen har gått ut
+          const lagreKnapp = document.querySelector('button[onclick="lagreAlleTips()"]');
+          if (lagreKnapp) {
+              lagreKnapp.style.display = erLaast ? 'none' : 'block';
+          }
+
           container.innerHTML = sorterteLag.map((lag, indeks) => `
-              <div class="drag-element" draggable="true" data-lag-id="${lag.id}">
+              <div class="drag-element" ${erLaast ? '' : 'draggable="true"'} data-lag-id="${lag.id}" style="${erLaast ? 'cursor: default; opacity: 0.9;' : ''}">
                   <div class="drag-venstre">
                       <div class="drag-plassering">${indeks + 1}</div>
                       <span style="font-weight: bold;">${lag.navn}</span>
                   </div>
-                  <div class="drag-handtak">☰</div>
+                  <div class="drag-handtak" style="${erLaast ? 'display: none;' : ''}">☰</div>
               </div>`).join('');
-          settOppDragAndDrop();
+
+          // Aktiver drag & drop kun hvis fristen IKKE har utløpt
+          if (!erLaast) {
+              settOppDragAndDrop();
+          } else {
+              // Vis gjerne en liten melding øverst om at tabellen er låst
+              const infoTekst = container.closest('.avdelings-kort')?.querySelector('.hjelpetekst');
+              if (infoTekst) {
+                  infoTekst.innerHTML = '<span style="color: #ff6b6b; font-weight: bold;">🔒 Fristen har utløpt. Tabelltipsene er nå låst.</span>';
+              }
+          }
       } catch (error) { console.error(error); }
     }
 
@@ -1159,7 +1180,7 @@
     }
 
     window.lagreAlleTips = async function() {
-      const låseDato = new Date('2026-09-08T00:00:00');
+      const låseDato = new Date('2026-09-15T00:00:00');
       if (new Date() >= låseDato) {
           alert("Det er ikke lenger mulig å endre tabellen.");
           return;
@@ -1624,7 +1645,7 @@
                 .eq('profil_id', userId);
 
             if (!tabellError) {
-                const frist = new Date('2026-09-08T23:59:59');
+                const frist = new Date('2026-09-015T23:59:59');
                 const na = new Date();
                 if ((!tabellTips || tabellTips.length === 0) && na < frist) {
                     manglerTabelltips = true;
