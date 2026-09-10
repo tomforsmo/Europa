@@ -1695,7 +1695,28 @@
             }
         }
     }, { passive: true });
+  // Sjekk om URL-en inneholder en passord-token fra e-posten
+  const urlParams = new URLSearchParams(window.location.hash.substring(1));
+    const typeParam = urlParams.get('type');
 
+    if (typeParam === 'recovery') {
+      document.getElementById('auth-container').style.display = 'flex';
+      document.getElementById('login-skjema').style.display = 'none';
+      document.getElementById('registrer-skjema').style.display = 'none';
+      document.getElementById('spill-seksjon').style.display = 'none';
+
+      const nyttPassord = prompt("Skriv inn ditt nye passord:");
+      if (nyttPassord) {
+        supabase.auth.updateUser({ password: nyttPassord }).then(({ error }) => {
+          if (error) {
+            alert("Klarte ikke å oppdatere passord: " + error.message);
+          } else {
+            alert("Passordet er oppdatert! Du er nå logget inn.");
+            location.href = window.location.pathname; // Fjerner token fra lenken
+          }
+        });
+      }
+    }
     sjekkBrukerStatusOgLastInn();
   </script>
 
