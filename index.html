@@ -758,11 +758,13 @@
       
         <!-- KNAPPENE ØVERST -->
         <div class="tab-button-container">
-          <button class="tab-btn active" onclick="switchTab('mitt-tips', this)">Mitt tips</button>
-          <button class="tab-btn" onclick="switchTab('live-tabell', this)">Livetabell</button>
+          <button class="tab-btn active" onclick="switchTab('live-tabell', this)">Livetabell</button>
+          <button class="tab-btn" onclick="switchTab('mitt-tips', this)">Mitt tips</button>
+          
         </div>
-     <!-- BOKS 1: MITT TIPS -->
-<div id="mitt-tips" class="tab-content avdelings-kort" style="border: 2px solid #ffd700; border-radius: 12px; background: rgba(0, 0, 0, 0.75); padding: 15px;">
+
+<!-- BOKS 1: MITT TIPS (skjult som standard) -->
+<div id="mitt-tips" class="tab-content avdelings-kort" style="display: none; border: 2px solid #ffd700; border-radius: 12px; background: rgba(0, 0, 0, 0.75); padding: 15px;">
   <div class="live-tabell-tittel" style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #ffd700; margin-bottom: 10px; font-size: 1.1rem;">
       <span>📝</span> MITT TABELLTIPS
   </div>
@@ -783,8 +785,9 @@
   </table>
 </div>
       
-        <!-- BOKS 2: LIVE-TABELL -->
-        <div id="live-tabell" class="tab-content live-tabell-container" style="display: none;">
+    
+       <!-- BOKS 2: LIVE-TABELL (vises som standard) -->
+<div id="live-tabell" class="tab-content live-tabell-container">
           <div class="live-tabell-tittel">
               <span>🟢</span> Fasit & Live-tabell
           </div>
