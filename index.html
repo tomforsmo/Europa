@@ -4,6 +4,16 @@
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag.js?id=G-GEJQE97F24"></script>
 <script>
+  window.switchTab = function(tabId, clickedBtn) {
+  const contents = document.querySelectorAll('.tab-content');
+  contents.forEach(content => content.style.display = 'none');
+
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById(tabId).style.display = 'block';
+  clickedBtn.classList.add('active');
+};
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -577,6 +587,33 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+    .tab-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.tab-btn {
+  background-color: #ffd700;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #e6c200;
+}
+
+.tab-btn.active {
+  /* Legg til eventuell styling for aktiv fane her hvis ønskelig */
+}
   </style>
 </head>
 <body>
@@ -718,43 +755,63 @@
       </div>
 
       <div id="seksjon-tabell-tips" style="display: none;">
-        <div class="avdelings-kort">
-          <h3>Tipp tabellen for Europa</h3>
-          <p class="hjelpetekst">Hold og dra i lagene for å flytte dem opp og ned i din tabell. Husk å lagre før du går videre.</p>
-          <div id="lag-tippe-liste" class="drag-liste">
-            <p style="text-align: center; color: var(--dempet-tekst);">Laster lag...</p>
+      
+        <!-- KNAPPENE ØVERST -->
+        <div class="tab-button-container">
+          <button class="tab-btn active" onclick="switchTab('mitt-tips', this)">Mitt tips</button>
+          <button class="tab-btn" onclick="switchTab('live-tabell', this)">Livetabell</button>
+        </div>
+     <!-- BOKS 1: MITT TIPS -->
+<div id="mitt-tips" class="tab-content avdelings-kort" style="border: 2px solid #ffd700; border-radius: 12px; background: rgba(0, 0, 0, 0.75); padding: 15px;">
+  <div class="live-tabell-tittel" style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #ffd700; margin-bottom: 10px; font-size: 1.1rem;">
+      <span>📝</span> MITT TABELLTIPS
+  </div>
+  <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">
+      Dette er tabellen du tippet før fristen gikk ut.
+  </p>
+
+  <table class="live-tabell" style="width: 100%; border-collapse: collapse;">
+      <thead>
+          <tr style="border-bottom: 1px solid #444;">
+              <th style="width: 50px; text-align: center; color: #ffd700; padding: 8px;">Nr</th>
+              <th style="color: #ffd700; padding: 8px; text-align: left;">Lag</th>
+          </tr>
+      </thead>
+      <tbody id="lag-tippe-liste">
+          <tr><td colspan="2" style="text-align: center; padding: 15px;">Henter dine tips...</td></tr>
+      </tbody>
+  </table>
+</div>
+      
+        <!-- BOKS 2: LIVE-TABELL -->
+        <div id="live-tabell" class="tab-content live-tabell-container" style="display: none;">
+          <div class="live-tabell-tittel">
+              <span>🟢</span> Fasit & Live-tabell
           </div>
-          <button onclick="lagreAlleTips()" class="knapp knapp-suksess" style="margin-top: 20px;">💾 Lagre tabelltips</button>
+          <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">
+              Denne tabellen oppdaterer seg automatisk og viser hvordan det faktisk går i turneringen.
+          </p>
+      
+          <table class="live-tabell">
+              <thead>
+                  <tr>
+                      <th>Nr</th>
+                      <th>Lag</th>
+                      <th>S</th>
+                      <th>V</th>
+                      <th>U</th>
+                      <th>T</th>
+                      <th>Mål</th>
+                      <th>D</th>
+                      <th>P</th>
+                  </tr>
+              </thead>
+              <tbody id="live-tabell-innhold">
+                  <tr><td colspan="9" style="text-align: center;">Henter live-tabell...</td></tr>
+              </tbody>
+          </table>
         </div>
-
-        <!-- LIVE-TABELL -->
-        <div class="live-tabell-container">
-            <div class="live-tabell-tittel">
-                <span>🟢</span> Fasit & Live-tabell
-            </div>
-            <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">
-                Denne tabellen oppdaterer seg automatisk og viser hvordan det faktisk går i turneringen.
-            </p>
-
-            <table class="live-tabell">
-                <thead>
-                    <tr>
-                        <th>Nr</th>
-                        <th>Lag</th>
-                        <th>S</th>
-                        <th>V</th>
-                        <th>U</th>
-                        <th>T</th>
-                        <th>Mål</th>
-                        <th>D</th>
-                        <th>P</th>
-                    </tr>
-                </thead>
-                <tbody id="live-tabell-innhold">
-                    <tr><td colspan="9" style="text-align: center;">Henter live-tabell...</td></tr>
-                </tbody>
-            </table>
-        </div>
+      
       </div>
 
       <div id="seksjon-kamp-tips" style="display: none;">
@@ -1035,169 +1092,59 @@
       sessionStorage.setItem('hoppet_over_avdeling', 'true');
     }
 
-    async function lastInnTippeskjerm() {
-      const { data: { user } } = await supabase.auth.getUser();
-      try {
-          const { data: lagene } = await supabase.from('europa_lag').select('*');
-          const container = document.getElementById('lag-tippe-liste');
-          if (!lagene || lagene.length === 0) {
-              container.innerHTML = `<p style="text-align: center; color: var(--dempet-tekst);">Ingen lag å vise ennå.</p>`;
-              return;
-          }
-
-          const { data: tips } = await supabase.from('spiller_tips').select('*').eq('profil_id', user.id);
-          const tipsMap = {};
-          if (tips) tips.forEach(t => tipsMap[t.lag_id] = t.tippet_plassering);
-          
-          const sorterteLag = [...lagene].sort((a, b) => {
-              const plassA = tipsMap[a.id];
-              const plassB = tipsMap[b.id];
-              if (plassA && plassB) return plassA - plassB;
-              if (plassA) return -1;
-              if (plassB) return 1;
-              return a.navn.localeCompare(b.navn);
-          });
-
-          // Sjekk om fristen (15. september 2026) har utløpt
-          const låseDato = new Date('2026-09-15T00:00:00');
-          const erLaast = new Date() >= låseDato;
-
-          // Skjul lagre-knappen hvis fristen har gått ut
-          const lagreKnapp = document.querySelector('button[onclick="lagreAlleTips()"]');
-          if (lagreKnapp) {
-              lagreKnapp.style.display = erLaast ? 'none' : 'block';
-          }
-
-          container.innerHTML = sorterteLag.map((lag, indeks) => `
-              <div class="drag-element" ${erLaast ? '' : 'draggable="true"'} data-lag-id="${lag.id}" style="${erLaast ? 'cursor: default; opacity: 0.9;' : ''}">
-                  <div class="drag-venstre">
-                      <div class="drag-plassering">${indeks + 1}</div>
-                      <span style="font-weight: bold;">${lag.navn}</span>
-                  </div>
-                  <div class="drag-handtak" style="${erLaast ? 'display: none;' : ''}">☰</div>
-              </div>`).join('');
-
-          // Aktiver drag & drop kun hvis fristen IKKE har utløpt
-          if (!erLaast) {
-              settOppDragAndDrop();
-          } else {
-              // Vis gjerne en liten melding øverst om at tabellen er låst
-              const infoTekst = container.closest('.avdelings-kort')?.querySelector('.hjelpetekst');
-              if (infoTekst) {
-                  infoTekst.innerHTML = '<span style="color: #ff6b6b; font-weight: bold;">🔒 Fristen har utløpt. Tabelltipsene er nå låst.</span>';
-              }
-          }
-      } catch (error) { console.error(error); }
-    }
-
-    function settOppDragAndDrop() {
+    window.lastInnTippeskjerm = async function() {
+  const { data: { user } } = await supabase.auth.getUser();
+  try {
+      const { data: lagene } = await supabase.from('europa_lag').select('*');
       const container = document.getElementById('lag-tippe-liste');
-      const elementer = container.querySelectorAll('.drag-element');
-
-      // --- DESKTOP (HTML5 DRAG & DROP) ---
-      elementer.forEach(el => {
-          el.removeEventListener('dragstart', el._dragStartHandler);
-          el.removeEventListener('dragend', el._dragEndHandler);
-
-          el._dragStartHandler = () => el.classList.add('dragging');
-          el._dragEndHandler = () => { el.classList.remove('dragging'); oppdaterPlasseringstall(); };
-
-          el.addEventListener('dragstart', el._dragStartHandler);
-          el.addEventListener('dragend', el._dragEndHandler);
-      });
-
-      if (!container._dragOverInitialized) {
-          container._dragOverInitialized = true;
-          container.addEventListener('dragover', e => {
-              e.preventDefault();
-              const etterElement = finnDragOverPlassering(container, e.clientY);
-              const dragObjekt = document.querySelector('.dragging');
-              if (dragObjekt) {
-                  if (etterElement == null) container.appendChild(dragObjekt);
-                  else container.insertBefore(dragObjekt, etterElement);
-              }
-          });
-      }
-
-      // --- MOBIL & TOUCH-STØTTE (iPhone / Android) ---
-      elementer.forEach(el => {
-          if (el._touchStartHandler) el.removeEventListener('touchstart', el._touchStartHandler);
-
-          let aktivtElement = null;
-
-          el._touchStartHandler = function(e) {
-              aktivtElement = el;
-              aktivtElement.classList.add('dragging');
-          };
-
-          el._touchMoveHandler = function(e) {
-              if (!aktivtElement) return;
-              e.preventDefault(); // Hindrer at nettsiden scroller mens du drar
-
-              const touch = e.touches[0];
-              const y = touch.clientY;
-              
-              const etterElement = finnDragOverPlassering(container, y);
-              if (etterElement == null) {
-                  container.appendChild(aktivtElement);
-              } else {
-                  container.insertBefore(aktivtElement, etterElement);
-              }
-              oppdaterPlasseringstall();
-          };
-
-          el._touchEndHandler = function() {
-              if (!aktivtElement) return;
-              aktivtElement.classList.remove('dragging');
-              aktivtElement = null;
-              oppdaterPlasseringstall();
-              
-              window.removeEventListener('touchmove', el._touchMoveHandler);
-              window.removeEventListener('touchend', el._touchEndHandler);
-          };
-
-          el.addEventListener('touchstart', (e) => {
-              el._touchStartHandler(e);
-              window.addEventListener('touchmove', el._touchMoveHandler, { passive: false });
-              window.addEventListener('touchend', el._touchEndHandler);
-          }, { passive: true });
-      });
-    }
-
-    function finnDragOverPlassering(container, y) {
-      const muligeElementer = [...container.querySelectorAll('.drag-element:not(.dragging)')];
-      return muligeElementer.reduce((nærmeste, barn) => {
-          const boks = barn.getBoundingClientRect();
-          const avstand = y - boks.top - boks.height / 2;
-          if (avstand < 0 && avstand > nærmeste.offset) return { offset: avstand, element: barn };
-          else return nærmeste;
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    function oppdaterPlasseringstall() {
-      const plasseringer = document.querySelectorAll('.drag-plassering');
-      plasseringer.forEach((plass, indeks) => plass.innerText = indeks + 1);
-    }
-
-    window.lagreAlleTips = async function() {
-      const låseDato = new Date('2026-09-15T00:00:00');
-      if (new Date() >= låseDato) {
-          alert("Det er ikke lenger mulig å endre tabellen.");
+      if (!lagene || lagene.length === 0) {
+          container.innerHTML = `<tr><td colspan="2" style="text-align: center; color: var(--dempet-tekst);">Ingen lag å vise ennå.</td></tr>`;
           return;
       }
-      const { data: { user } } = await supabase.auth.getUser();
-      const elementer = document.querySelectorAll('.drag-element');
-      const tipsOppdateringer = [];
-      elementer.forEach((el, indeks) => {
-          tipsOppdateringer.push({ profil_id: user.id, lag_id: parseInt(el.getAttribute('data-lag-id')), tippet_plassering: indeks + 1 });
-      });
-      try {
-          const { error } = await supabase.from('spiller_tips').upsert(tipsOppdateringer, { onConflict: 'profil_id, lag_id' });
-          if (error) throw error;
-          alert("Tabelltips lagret! 💛🖤");
-      } catch (error) { alert("Feil: " + error.message); }
-    }
 
+      const { data: tips } = await supabase.from('spiller_tips').select('*').eq('profil_id', user.id);
+      const tipsMap = {};
+      if (tips) tips.forEach(t => tipsMap[t.lag_id] = t.tippet_plassering);
+      
+      const sorterteLag = [...lagene].sort((a, b) => {
+          const plassA = tipsMap[a.id];
+          const plassB = tipsMap[b.id];
+          if (plassA && plassB) return plassA - plassB;
+          if (plassA) return -1;
+          if (plassB) return 1;
+          return a.navn.localeCompare(b.navn);
+      });
+
+      // Skjul lagre-knappen hvis den finnes
+      const lagreKnapp = document.querySelector('button[onclick="lagreAlleTips()"]');
+      if (lagreKnapp) {
+          lagreKnapp.style.display = 'none';
+      }
+
+      // Genererer tabellrader med farger og skillelinjer som matcher fasiten
+      container.innerHTML = sorterteLag.map((lag, indeks) => {
+          const plass = indeks + 1;
+          let radStil = 'border-bottom: 1px solid rgba(255, 255, 255, 0.08);';
+          
+          if (plass <= 8) {
+              radStil += ' background-color: rgba(46, 139, 87, 0.15);';
+          } else if (plass >= 25) {
+              radStil += ' background-color: rgba(178, 34, 34, 0.15);';
+          }
+
+          if (plass === 8 || plass === 24) {
+              radStil += ' border-bottom: 2px solid #ffd700;';
+          }
+
+          return `
+              <tr style="${radStil}">
+                  <td style="width: 50px; text-align: center; font-weight: bold; padding: 8px; color: #fff;">${plass}</td>
+                  <td style="font-weight: bold; padding: 8px; color: #fff;">${lag.navn}</td>
+              </tr>`;
+      }).join('');
+
+  } catch (error) { console.error(error); }
+};
     async function lastInnLiveTabell() {
         const tbody = document.getElementById('live-tabell-innhold');
         if (!tbody) return;
@@ -1717,7 +1664,23 @@
         });
       }
     }
+    function switchTab(tabId, clickedBtn) {
+  // Skjul alt innhold som har klassen .tab-content
+  const contents = document.querySelectorAll('.tab-content');
+  contents.forEach(content => content.style.display = 'none');
+
+  // Fjern 'active'-klassen fra begge knappene
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // Vis den tabben brukeren trykket på
+  document.getElementById(tabId).style.display = 'block';
+
+  // Marker knappen du trykket på som aktiv
+  clickedBtn.classList.add('active');
+}
     sjekkBrukerStatusOgLastInn();
+  
   </script>
 
   <!-- BUNNMENY FOR MOBIL -->
