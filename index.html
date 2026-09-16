@@ -1118,13 +1118,11 @@
           return a.navn.localeCompare(b.navn);
       });
 
-      // Skjul lagre-knappen hvis den finnes
       const lagreKnapp = document.querySelector('button[onclick="lagreAlleTips()"]');
       if (lagreKnapp) {
           lagreKnapp.style.display = 'none';
       }
 
-      // Genererer tabellrader med farger og skillelinjer som matcher fasiten
       container.innerHTML = sorterteLag.map((lag, indeks) => {
           const plass = indeks + 1;
           let radStil = 'border-bottom: 1px solid rgba(255, 255, 255, 0.08);';
@@ -1139,104 +1137,114 @@
               radStil += ' border-bottom: 2px solid #ffd700;';
           }
 
+          const logoHtml = lag.logo_url 
+              ? `<img src="${lag.logo_url}" alt="" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-right: 8px;">` 
+              : '';
+
           return `
               <tr style="${radStil}">
                   <td style="width: 50px; text-align: center; font-weight: bold; padding: 8px; color: #fff;">${plass}</td>
-                  <td style="font-weight: bold; padding: 8px; color: #fff;">${lag.navn}</td>
+                  <td style="font-weight: bold; padding: 8px; color: #fff; display: flex; align-items: center;">${logoHtml}${lag.navn}</td>
               </tr>`;
       }).join('');
 
   } catch (error) { console.error(error); }
 };
-    async function lastInnLiveTabell() {
-        const tbody = document.getElementById('live-tabell-innhold');
-        if (!tbody) return;
+    // Erstatt din eksisterende 'lastInnLiveTabell' med denne:
+async function lastInnLiveTabell() {
+    const tbody = document.getElementById('live-tabell-innhold');
+    if (!tbody) return;
 
-        try {
-            const { data: lagListe, error: lagError } = await supabase
-                .from('europa_lag')
-                .select('*')
-                .order('navn', { ascending: true });
+    try {
+        const { data: lagListe, error: lagError } = await supabase
+            .from('europa_lag')
+            .select('*')
+            .order('navn', { ascending: true });
 
-            if (lagError) throw lagError;
+        if (lagError) throw lagError;
 
-            if (!lagListe || lagListe.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--dempet-tekst);">Ingen lag funnet.</td></tr>`;
-                return;
-            }
-
-            const { data: offisiellTabell, error: tabellError } = await supabase
-                .from('offisiell_tabell')
-                .select('*');
-
-            if (tabellError) throw tabellError;
-
-            const tabellMap = {};
-            if (offisiellTabell) {
-                offisiellTabell.forEach(rad => {
-                    tabellMap[rad.lag_id] = rad;
-                });
-            }
-
-            const komplettTabell = lagListe.map(lag => {
-                const stats = tabellMap[lag.id] || {};
-                return {
-                    lag_id: lag.id,
-                    navn: lag.navn,
-                    kamper_spilt: stats.kamper_spilt || 0,
-                    vunnet: stats.vunnet || 0,
-                    uavgjort: stats.uavgjort || 0,
-                    tapt: stats.tapt || 0,
-                    maal_for: stats.maal_for || 0,
-                    maal_imot: stats.maal_imot || 0,
-                    poeng: stats.poeng || 0,
-                    offisiell_plass: stats.plassering || 999
-                };
-            });
-
-            komplettTabell.sort((a, b) => {
-                if (a.poeng !== b.poeng) return b.poeng - a.poeng;
-                const mfA = a.maal_for - a.maal_imot;
-                const mfB = b.maal_for - b.maal_imot;
-                if (mfA !== mfB) return mfB - mfA;
-                if (a.maal_for !== b.maal_for) return b.maal_for - a.maal_for;
-                return a.navn.localeCompare(b.navn);
-            });
-
-            tbody.innerHTML = komplettTabell.map((rad, index) => {
-                const plass = index + 1;
-                let soneKlasse = 'sone-mellom';
-                let strekKlasse = '';
-
-                if (plass <= 8) soneKlasse = 'sone-topp';
-                else if (plass >= 25) soneKlasse = 'sone-bunn';
-
-                if (plass === 8) strekKlasse = 'strek-bundet-8';
-                if (plass === 24) strekKlasse = 'strek-bundet-24';
-
-                const maalforskjell = rad.maal_for - rad.maal_imot;
-                const mfTekst = maalforskjell > 0 ? `+${maalforskjell}` : maalforskjell;
-
-                return `
-                    <tr class="${soneKlasse} ${strekKlasse}">
-                        <td>${plass}</td>
-                        <td style="text-align: left; font-weight: bold;">${rad.navn}</td>
-                        <td>${rad.kamper_spilt}</td>
-                        <td>${rad.vunnet}</td>
-                        <td>${rad.uavgjort}</td>
-                        <td>${rad.tapt}</td>
-                        <td>${rad.maal_for}-${rad.maal_imot}</td>
-                        <td>${mfTekst}</td>
-                        <td style="font-weight: bold; color: var(--glimt-gul);">${rad.poeng}</td>
-                    </tr>
-                `;
-            }).join('');
-
-        } catch (err) {
-            console.error("Feil ved lasting av live-tabell:", err);
-            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Kunne ikke laste live-tabell.</td></tr>`;
+        if (!lagListe || lagListe.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--dempet-tekst);">Ingen lag funnet.</td></tr>`;
+            return;
         }
+
+        const { data: offisiellTabell, error: tabellError } = await supabase
+            .from('offisiell_tabell')
+            .select('*');
+
+        if (tabellError) throw tabellError;
+
+        const tabellMap = {};
+        if (offisiellTabell) {
+            offisiellTabell.forEach(rad => {
+                tabellMap[rad.lag_id] = rad;
+            });
+        }
+
+        const komplettTabell = lagListe.map(lag => {
+            const stats = tabellMap[lag.id] || {};
+            return {
+                lag_id: lag.id,
+                navn: lag.navn,
+                logo_url: lag.logo_url,
+                kamper_spilt: stats.kamper_spilt || 0,
+                vunnet: stats.vunnet || 0,
+                uavgjort: stats.uavgjort || 0,
+                tapt: stats.tapt || 0,
+                maal_for: stats.maal_for || 0,
+                maal_imot: stats.maal_imot || 0,
+                poeng: stats.poeng || 0,
+                offisiell_plass: stats.plassering || 999
+            };
+        });
+
+        komplettTabell.sort((a, b) => {
+            if (a.poeng !== b.poeng) return b.poeng - a.poeng;
+            const mfA = a.maal_for - a.maal_imot;
+            const mfB = b.maal_for - b.maal_imot;
+            if (mfA !== mfB) return mfB - mfA;
+            if (a.maal_for !== b.maal_for) return b.maal_for - a.maal_for;
+            return a.navn.localeCompare(b.navn);
+        });
+
+        tbody.innerHTML = komplettTabell.map((rad, index) => {
+            const plass = index + 1;
+            let soneKlasse = 'sone-mellom';
+            let strekKlasse = '';
+
+            if (plass <= 8) soneKlasse = 'sone-topp';
+            else if (plass >= 25) soneKlasse = 'sone-bunn';
+
+            if (plass === 8) strekKlasse = 'strek-bundet-8';
+            if (plass === 24) strekKlasse = 'strek-bundet-24';
+
+            const maalforskjell = rad.maal_for - rad.maal_imot;
+            const mfTekst = maalforskjell > 0 ? `+${maalforskjell}` : maalforskjell;
+
+            const logoHtml = rad.logo_url 
+                ? `<img src="${rad.logo_url}" alt="" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-right: 8px;">` 
+                : '';
+
+            return `
+                <tr class="${soneKlasse} ${strekKlasse}">
+                    <td>${plass}</td>
+                    <td style="text-align: left; font-weight: bold; display: flex; align-items: center;">${logoHtml}${rad.navn}</td>
+                    <td>${rad.kamper_spilt}</td>
+                    <td>${rad.vunnet}</td>
+                    <td>${rad.uavgjort}</td>
+                    <td>${rad.tapt}</td>
+                    <td>${rad.maal_for}-${rad.maal_imot}</td>
+                    <td>${mfTekst}</td>
+                    <td style="font-weight: bold; color: var(--glimt-gul);">${rad.poeng}</td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error("Feil ved lasting av live-tabell:", err);
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Kunne ikke laste live-tabell.</td></tr>`;
     }
+}
 
     // Funksjon for å regne ut hvilken runde som skal vises som standard (2 dager etter siste kamp i runden)
     async function finnAktuellRundeAutomatisk() {
@@ -1289,95 +1297,138 @@
             return 1;
         }
     }
-
-    async function lastInnKamperForRunde() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      document.getElementById('vis-aktiv-runde').innerText = `Runde ${aktivRunde} av 8`;
-      document.getElementById('forrige-runde-btn').disabled = (aktivRunde === 1);
-      document.getElementById('neste-runde-btn').disabled = (aktivRunde === 8);
-      
-      const container = document.getElementById('kamp-tippe-liste');
-      if (!container) return;
-
-      container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper...</p>';
-      
-      try {
-          // 1. Hent alle kamper for runden
-          const { data: alleKamperISesongen, error: kampError } = await supabase
-              .from('europa_kamper')
-              .select('id, runde, kamp_dato, is_featured, hjemmelag:europa_lag!hjemmelag_id(id, navn), bortelag:europa_lag!bortelag_id(id, navn), fasit_hjemme, fasit_borte')
-              .eq('runde', aktivRunde);
-              
-          if (kampError) throw kampError;
-          
-          // 2. Filtrer ut kun de som er huket av som 'is_featured'
-          const kamper = (alleKamperISesongen || []).filter(kamp => kamp.is_featured === true);
-          
-          if (!kamper || kamper.length === 0) {
-              container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Ingen utvalgte kamper registrert for denne runden.</p>';
-              return;
-          }
-          
-          const kampIder = kamper.map(k => k.id);
-          const { data: tipsTabell } = await supabase.from('spiller_kamp_tips').select('*').eq('profil_id', user.id).in('kamp_id', kampIder);
-          
-          const tipsMap = {};
-          if (tipsTabell) tipsTabell.forEach(t => tipsMap[t.kamp_id] = { hjemme: t.tippet_hjemmemaal, borte: t.tippet_bortemaal });
-          
-          container.innerHTML = kamper.map((kamp, index) => {
-              const tHjemme = tipsMap[kamp.id] ? tipsMap[kamp.id].hjemme : '';
-              const tBorte = tipsMap[kamp.id] ? tipsMap[kamp.id].borte : '';
-              
-              const isoDato = kamp.kamp_dato ? kamp.kamp_dato.replace(' ', 'T') : '';
-              const kampDato = new Date(isoDato);
-              const na = new Date();
-              const erLaast = isNaN(kampDato) ? false : (na >= kampDato);
-
-              const formtertFrist = isNaN(kampDato) ? '' : kampDato.toLocaleDateString('no-NO', { 
-                  day: '2-digit', 
-                  month: '2-digit', 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-              });
-
-              let fasitHtml = '<div style="font-size: 0.8rem; height: 18px; margin: 2px 0;">';
-              if (kamp.fasit_hjemme !== null && kamp.fasit_hjemme !== undefined && 
-                  kamp.fasit_borte !== null && kamp.fasit_borte !== undefined) {
-                  fasitHtml += '<span style="color: #FFD700; font-weight: bold;">Fasit: ' + kamp.fasit_hjemme + ' - ' + kamp.fasit_borte + '</span>';
-              }
-              fasitHtml += '</div>';
-
-              let manglerTipsAdvarsel = '';
-              if (!erLaast && (tHjemme === '' || tBorte === '')) {
-                  manglerTipsAdvarsel = '<div style="font-size: 0.75rem; color: #ff6b6b; margin-top: 4px; font-weight: bold;">⚠️ Du har ikke tippet denne kampen enda!</div>';
-              }
-
-              return `
-              <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: 1px solid rgba(255,255,255,0.1);">
-                      <div class="kamp-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
-                          <span>Kamp #${index + 1}</span>
-                          <span style="color: #aaa;">Frist: ${formtertFrist} ${erLaast ? '(Låst)' : ''}</span>
-                      </div>
-                      
-                      ${fasitHtml}
-
-                      <div class="kamp-innhold" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 4px;">
-                          <span style="flex: 1; text-align: right; min-height: 44px; display: flex; align-items: center; justify-content: flex-end;">${kamp.hjemmelag?.navn || ''}</span>
-                          <input class="hjemme-input" type="number" value="${tHjemme !== undefined ? tHjemme : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
-                          <span>-</span>
-                          <input class="borte-input" type="number" value="${tBorte !== undefined ? tBorte : ''}" placeholder="-" ${erLaast ? 'disabled' : ''}>
-                          <span style="flex: 1; text-align: left; min-height: 44px; display: flex; align-items: center; justify-content: flex-start;">${kamp.bortelag?.navn || ''}</span>
-                      </div>
-                      ${manglerTipsAdvarsel}
-                  </div>`;
-          }).join('');
-      } catch (error) { 
-          console.error(error); 
-          container.innerHTML = '<p style="color:red;">Kunne ikke laste kamper.</p>';
-      }
+    function getRundeNavn(rundeNummer) {
+    switch (rundeNummer) {
+        case 1: case 2: case 3: case 4: 
+        case 5: case 6: case 7: case 8: 
+            return `Runde ${rundeNummer} (Ligaspill)`;
+        case 9:  return '16.-delsfinale (1. kamp)';
+        case 10: return '16.-delsfinale (Returkamp)';
+        case 11: return '8.-delsfinale (1. kamp)';
+        case 12: return '8.-delsfinale (Returkamp)';
+        case 13: return 'Kvartfinale (1. kamp)';
+        case 14: return 'Kvartfinale (Returkamp)';
+        case 15: return 'Semifinale (1. kamp)';
+        case 16: return 'Semifinale (Returkamp)';
+        case 17: return 'Finale';
+        default: return `Runde ${rundeNummer}`;
     }
+}
+  // Oppdatert 'lastInnKamperForRunde' med logo over lagnavnet
+  async function lastInnKamperForRunde() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  
+  // Bruk getRundeNavn her i stedet for fasttekst!
+  document.getElementById('vis-aktiv-runde').innerText = getRundeNavn(aktivRunde);
+  
+  // Tillat at man kan blad forbi runde 8 (sluttspill opp til f.eks. runde 17)
+  document.getElementById('forrige-runde-btn').disabled = (aktivRunde === 1);
+  document.getElementById('neste-runde-btn').disabled = (aktivRunde === 17); // Oppdatert fra 8 til 17
+  
+  const container = document.getElementById('kamp-tippe-liste');
+  if (!container) return;
+  // (Resten av koden din fortsetter her...)
+
+  container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper...</p>';
+  
+  try {
+      const { data: alleKamperISesongen, error: kampError } = await supabase
+          .from('europa_kamper')
+          .select('id, runde, kamp_dato, is_featured, hjemmelag:europa_lag!hjemmelag_id(id, navn, logo_url), bortelag:europa_lag!bortelag_id(id, navn, logo_url), fasit_hjemme, fasit_borte')
+          .eq('runde', aktivRunde);
+          
+      if (kampError) throw kampError;
+      
+      const kamper = (alleKamperISesongen || []).filter(kamp => kamp.is_featured === true);
+      
+      if (!kamper || kamper.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Ingen utvalgte kamper registrert for denne runden.</p>';
+          return;
+      }
+      
+      const kampIder = kamper.map(k => k.id);
+      const { data: tipsTabell } = await supabase.from('spiller_kamp_tips').select('*').eq('profil_id', user.id).in('kamp_id', kampIder);
+      
+      const tipsMap = {};
+      if (tipsTabell) tipsTabell.forEach(t => tipsMap[t.kamp_id] = { hjemme: t.tippet_hjemmemaal, borte: t.tippet_bortemaal });
+      
+      container.innerHTML = kamper.map((kamp, index) => {
+          const tHjemme = tipsMap[kamp.id] ? tipsMap[kamp.id].hjemme : '';
+          const tBorte = tipsMap[kamp.id] ? tipsMap[kamp.id].borte : '';
+          
+          const isoDato = kamp.kamp_dato ? kamp.kamp_dato.replace(' ', 'T') : '';
+          const kampDato = new Date(isoDato);
+          const na = new Date();
+          const erLaast = isNaN(kampDato) ? false : (na >= kampDato);
+
+          const formtertFrist = isNaN(kampDato) ? '' : kampDato.toLocaleDateString('no-NO', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+          });
+
+          let fasitHtml = '<div style="font-size: 0.8rem; height: 18px; margin: 2px 0; text-align: center;">';
+          if (kamp.fasit_hjemme !== null && kamp.fasit_hjemme !== undefined && 
+              kamp.fasit_borte !== null && kamp.fasit_borte !== undefined) {
+              fasitHtml += '<span style="color: #FFD700; font-weight: bold;">Fasit: ' + kamp.fasit_hjemme + ' - ' + kamp.fasit_borte + '</span>';
+          }
+          fasitHtml += '</div>';
+
+          let manglerTipsAdvarsel = '';
+          if (!erLaast && (tHjemme === '' || tBorte === '')) {
+              manglerTipsAdvarsel = '<div style="font-size: 0.75rem; color: #ff6b6b; margin-top: 6px; font-weight: bold; text-align: center;">⚠️ Du har ikke tippet denne kampen enda!</div>';
+          }
+
+          // HTML for logo over lagnavn (med fast høyde/bredde så det ikke hopper, og fallback om logo mangler)
+          const hjemmeLogoHtml = kamp.hjemmelag?.logo_url 
+              ? `<img src="${kamp.hjemmelag.logo_url}" alt="" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 4px;">` 
+              : `<div style="width: 36px; height: 36px; margin-bottom: 4px;"></div>`;
+              
+          const borteLogoHtml = kamp.bortelag?.logo_url 
+              ? `<img src="${kamp.bortelag.logo_url}" alt="" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 4px;">` 
+              : `<div style="width: 36px; height: 36px; margin-bottom: 4px;"></div>`;
+
+          return `
+          <div class="kamp-kort" data-kamp-id="${kamp.id}" style="border: 1px solid rgba(255,255,255,0.1); padding: 12px;">
+                  <div class="kamp-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 8px;">
+                      <span>Kamp #${index + 1}</span>
+                      <span style="color: #aaa;">Frist: ${formtertFrist} ${erLaast ? '(Låst)' : ''}</span>
+                  </div>
+                  
+                  ${fasitHtml}
+
+                  <div class="kamp-innhold" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 8px;">
+                      
+                      <!-- Hjemmelag (Logo over navn, tekst høyrejustert eller sentrert) -->
+                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                          ${hjemmeLogoHtml}
+                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2;">${kamp.hjemmelag?.navn || ''}</span>
+                      </div>
+
+                      <!-- Inputfelt -->
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                          <input class="hjemme-input" type="number" value="${tHjemme !== undefined ? tHjemme : ''}" placeholder="-" ${erLaast ? 'disabled' : ''} style="width: 40px; text-align: center; font-size: 1.1rem; padding: 6px;">
+                          <span style="font-weight: bold; font-size: 1.2rem;">-</span>
+                          <input class="borte-input" type="number" value="${tBorte !== undefined ? tBorte : ''}" placeholder="-" ${erLaast ? 'disabled' : ''} style="width: 40px; text-align: center; font-size: 1.1rem; padding: 6px;">
+                      </div>
+
+                      <!-- Bortelag (Logo over navn, tekst venstrejustert eller sentrert) -->
+                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                          ${borteLogoHtml}
+                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2;">${kamp.bortelag?.navn || ''}</span>
+                      </div>
+
+                  </div>
+                  ${manglerTipsAdvarsel}
+              </div>`;
+      }).join('');
+  } catch (error) { 
+      console.error(error); 
+      container.innerHTML = '<p style="color:red;">Kunne ikke laste kamper.</p>';
+  }
+}
 
     window.forrigeRunde = function() { if (aktivRunde > 1) { aktivRunde--; lastInnKamperForRunde(); } }
     window.nesteRunde = function() { if (aktivRunde < 8) { aktivRunde++; lastInnKamperForRunde(); } }
