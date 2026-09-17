@@ -678,7 +678,7 @@
       </div>
 
       <div id="auth-om-seksjon" class="auth-kort">
-        < <h2>Om Glimt i Europa</h2>
+         <h2>Om Glimt i Europa</h2>
         <p class="hjelpetekst" style="color: var(--dempet-tekst); line-height: 1.5;">
           Glimt i Europa er en artig måte å sette opp en intern konkurranse på, og gjør det enda morsommere å følge med på Bodø/Glimts eventyr ute i Europa! Her kan du konkurrere mot kolleger, venner eller andre supportere om hvem som har best teft for kampene.
         </p>
@@ -692,7 +692,9 @@
         <h3 style="font-size: 1.1rem; margin-top: 15px;">Slik beregnes poengene</h3>
         <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Kamptips (enkeltkamper)</p>
         <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
-          <li><strong style="color: var(--lys-tekst);">Riktig kampresultat (H/U/B):</strong> 2 poeng</li>
+        </ul>
+        <li><strong style="color: var(--lys-tekst);">Riktig vinner:</strong> 1 poeng<l/i>
+          <li><strong style="color: var(--lys-tekst);">Riktig kampresultat:</strong> 1 poeng</li>
           <li><strong style="color: var(--lys-tekst);">Riktig antall mål for hjemmelag:</strong> 1 poeng</li>
           <li><strong style="color: var(--lys-tekst);">Riktig antall mål for bortelag:</strong> 1 poeng</li>
         </ul>
@@ -843,7 +845,7 @@
                         <th>#</th>
                         <th>NAVN</th>
                         <th>KAMP P</th>
-                        <th>GRUPPE P</th>
+                        <th>TABELL P</th>
                         <th>TOTALT</th>
                     </tr>
                 </thead>
@@ -873,7 +875,7 @@
           <h3 style="font-size: 1.1rem; margin-top: 15px;">Slik beregnes poengene</h3>
           <p class="hjelpetekst" style="margin-bottom: 10px; color: var(--glimt-gul);">Kamptips (enkeltkamper)</p>
           <ul style="color: var(--dempet-tekst); line-height: 1.6; padding-left: 20px; margin-top: 0;">
-            <li><strong style="color: var(--lys-tekst);">Riktig kampresultat (H/U/B):</strong> 2 poeng</li>
+            <li><strong style="color: var(--lys-tekst);">Riktig vinner:</strong> 1 poeng<l/i> <li><strong style="color: var(--lys-tekst);">Riktig kampresultat:</strong> 1 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Riktig antall mål for hjemmelag:</strong> 1 poeng</li>
             <li><strong style="color: var(--lys-tekst);">Riktig antall mål for bortelag:</strong> 1 poeng</li>
           </ul>
@@ -1314,21 +1316,40 @@ async function lastInnLiveTabell() {
         default: return `Runde ${rundeNummer}`;
     }
 }
-  // Oppdatert 'lastInnKamperForRunde' med logo over lagnavnet
-  async function lastInnKamperForRunde() {
+ // Hjelpefunksjon for å beregne poeng (kan ligge øverst i filen din)
+function beregnPoengForKamp(tippetHjemme, tippetBorte, fasitHjemme, fasitBorte) {
+    if (tippetHjemme === '' || tippetBorte === '' || fasitHjemme === null || fasitHjemme === undefined) {
+        return 0;
+    }
+    const tH = parseInt(tippetHjemme);
+    const tB = parseInt(tippetBorte);
+    const fH = parseInt(fasitHjemme);
+    const fB = parseInt(fasitBorte);
+
+    if (tH < 0 || tB < 0) return 0;
+
+    let poeng = 0;
+    if (tH === fH) poeng += 1; // Rett mål hjemme
+    if (tB === fB) poeng += 1; // Rett mål borte
+    if ((tH - tB) === (fH - fB)) poeng += 1; // Rett differanse
+    if ((fH > fB && tH > tB) || (fH < fB && tH < tB) || (fH === fB && tH === tB)) {
+        poeng += 1; // Rett H/U/B
+    }
+    return poeng;
+}
+
+// Oppdatert 'lastInnKamperForRunde' med logo, cup-navn og poengvisning
+async function lastInnKamperForRunde() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
   
-  // Bruk getRundeNavn her i stedet for fasttekst!
+  // Viser riktig navn (f.eks. ligaspill eller cup-runde)
   document.getElementById('vis-aktiv-runde').innerText = getRundeNavn(aktivRunde);
-  
-  // Tillat at man kan blad forbi runde 8 (sluttspill opp til f.eks. runde 17)
   document.getElementById('forrige-runde-btn').disabled = (aktivRunde === 1);
-  document.getElementById('neste-runde-btn').disabled = (aktivRunde === 17); // Oppdatert fra 8 til 17
+  document.getElementById('neste-runde-btn').disabled = (aktivRunde === 17);
   
   const container = document.getElementById('kamp-tippe-liste');
   if (!container) return;
-  // (Resten av koden din fortsetter her...)
 
   container.innerHTML = '<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper...</p>';
   
@@ -1369,17 +1390,31 @@ async function lastInnLiveTabell() {
               minute: '2-digit' 
           });
 
-          let fasitHtml = '<div style="font-size: 0.8rem; height: 18px; margin: 2px 0; text-align: center;">';
+          // --- NY OG OPPDATERT FASIT- OG POENGVISNING ---
+          let fasitHtml = '<div style="font-size: 0.85rem; margin: 4px 0; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;">';
           if (kamp.fasit_hjemme !== null && kamp.fasit_hjemme !== undefined && 
               kamp.fasit_borte !== null && kamp.fasit_borte !== undefined) {
+              
+              // Regn ut poeng for denne kampen basert på brukerens tips og fasiten
+              const oppnåddePoeng = beregnPoengForKamp(tHjemme, tBorte, kamp.fasit_hjemme, kamp.fasit_borte);
+              
+              // Fargekode for poengene (Gull for 4, Grønn for 1-3, Rød for 0)
+              let farge = '#ff6b6b';
+              if (oppnåddePoeng === 4) farge = '#FFD700';
+              else if (oppnåddePoeng >= 1) farge = '#51cf66';
+
               fasitHtml += '<span style="color: #FFD700; font-weight: bold;">Fasit: ' + kamp.fasit_hjemme + ' - ' + kamp.fasit_borte + '</span>';
+              fasitHtml += '<span style="background-color: ' + farge + '20; color: ' + farge + '; font-weight: bold; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">+' + oppnåddePoeng + 'p</span>';
           }
           fasitHtml += '</div>';
+          // ---------------------------------------------
 
           let manglerTipsAdvarsel = '';
           if (!erLaast && (tHjemme === '' || tBorte === '')) {
               manglerTipsAdvarsel = '<div style="font-size: 0.75rem; color: #ff6b6b; margin-top: 6px; font-weight: bold; text-align: center;">⚠️ Du har ikke tippet denne kampen enda!</div>';
           }
+
+          // (Resten av koden for å bygge opp selve HTML-kortet for kampen fortsetter her...)
 
           // HTML for logo over lagnavn (med fast høyde/bredde så det ikke hopper, og fallback om logo mangler)
           const hjemmeLogoHtml = kamp.hjemmelag?.logo_url 
