@@ -1226,10 +1226,12 @@ async function lastInnLiveTabell() {
                 ? `<img src="${rad.logo_url}" alt="" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-right: 8px;">` 
                 : '';
 
-            return `
+                return `
                 <tr class="${soneKlasse} ${strekKlasse}">
                     <td>${plass}</td>
-                    <td style="text-align: left; font-weight: bold; display: flex; align-items: center;">${logoHtml}${rad.navn}</td>
+                    <td style="text-align: left; font-weight: bold; display: flex; align-items: center; cursor: pointer; color: var(--glimt-gul);" onclick="hentOgVisLagKamper('${rad.lag_id}', '${rad.navn}')">
+                        ${logoHtml}<span style="text-decoration: underline;">${rad.navn}</span>
+                    </td>
                     <td>${rad.kamper_spilt}</td>
                     <td>${rad.vunnet}</td>
                     <td>${rad.uavgjort}</td>
@@ -1593,6 +1595,73 @@ async function lastInnKamperForRunde() {
     }
 
     // SPYMODE: Hent og vis en annen spillers tips
+   // Hent og vis alle kamper for et lag når man trykker på det i livetabellen
+   window.hentOgVisLagKamper = async function(lagId, lagNavn) {
+        const modal = document.getElementById('spy-modal');
+        const tittel = document.getElementById('spy-tittel');
+        const undertittel = document.getElementById('spy-undertittel');
+        const innhold = document.getElementById('spy-innhold');
+
+        if (!modal) return;
+
+        tittel.innerText = `Kamper for: ${lagNavn}`;
+        undertittel.innerText = `Oversikt over runder, motstandere og resultater.`;
+        innhold.innerHTML = `<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper fra databasen...</p>`;
+        modal.style.display = 'flex';
+
+        try {
+            const { data: kamper, error } = await supabase
+                .from('europa_kamper')
+                .select(`
+                    runde,
+                    kamp_dato,
+                    fasit_hjemme,
+                    fasit_borte,
+                    hjemmelag:europa_lag!hjemmelag_id(id, navn, logo_url),
+                    bortelag:europa_lag!bortelag_id(id, navn, logo_url)
+                `)
+                .or(`hjemmelag_id.eq.${lagId},bortelag_id.eq.${lagId}`)
+                .order('runde', { ascending: true });
+
+            if (error) throw error;
+
+            if (!kamper || kamper.length === 0) {
+                innhold.innerHTML = `<p style="color: var(--dempet-tekst); text-align: center;">Ingen kamper registrert for dette laget ennå.</p>`;
+                return;
+            }
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;">';
+            kamper.forEach(k => {
+                const erHjemme = k.hjemmelag.id == lagId;
+                const motstander = erHjemme ? k.bortelag : k.hjemmelag;
+                const motstanderNavn = motstander ? motstander.navn : 'Ukjent motstander';
+                const motstanderLogo = motstander && motstander.logo_url ? `<img src="${motstander.logo_url}" style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 5px;">` : '';
+                
+                const hjemmeMål = k.fasit_hjemme !== null && k.fasit_hjemme !== undefined ? k.fasit_hjemme : '-';
+                const borteMål = k.fasit_borte !== null && k.fasit_borte !== undefined ? k.fasit_borte : '-';
+                const resultatTekst = (k.fasit_hjemme !== null && k.fasit_borte !== null) ? `${hjemmeMål} - ${borteMål}` : 'Ikke spilt';
+                const hjemmeEllerBorte = erHjemme ? '(Hjemme)' : '(Borte)';
+
+                html += `
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="color: var(--glimt-gul); font-weight: bold;">Runde ${k.runde}</span> <span style="font-size: 0.8rem; color: #aaa;">${hjemmeEllerBorte}</span><br>
+                            <span style="display: flex; align-items: center; margin-top: 4px;">mot ${motstanderLogo}${motstanderNavn}</span>
+                        </div>
+                        <div style="font-weight: bold; color: var(--glimt-gul); font-size: 1rem;">
+                            ${resultatTekst}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            innhold.innerHTML = html;
+        } catch (err) {
+            console.error("Feil ved henting av lagkamper:", err);
+            innhold.innerHTML = `<p style="color: red; text-align: center;">Kunne ikke laste kamper.</p>`;
+        }
+    };
     window.hentOgVisTips = async function(profilId, brukernavn) {
         const modal = document.getElementById('spy-modal');
         const tittel = document.getElementById('spy-tittel');
