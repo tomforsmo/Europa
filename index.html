@@ -835,6 +835,10 @@
       </div>
 
       <div id="seksjon-leaderboard" style="display: none;">
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button onclick="window.visLeaderboard('total')" class="knapp knapp-primær" style="flex: 1;">Universell tabell</button>
+          <button onclick="window.visLeaderboard('avdeling')" class="knapp knapp-primær" style="flex: 1;">Min Liga</button>
+        </div>
         <div class="avdelings-kort">
             <h2 style="color: var(--glimt-gul);">Glimt i Europa - Tabell</h2>
             <p style="font-size: 0.85rem; color: var(--dempet-tekst); margin-bottom: 10px;">💡 Trykk på en spiller for å spionere på deres tips!</p>
@@ -851,10 +855,6 @@
                 <tbody id="leaderboard-liste">
                 </tbody>
             </table>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-              <button onclick="window.visLeaderboard('total')" class="knapp knapp-primær" style="flex: 1;">Universell tabell</button>
-              <button onclick="window.visLeaderboard('avdeling')" class="knapp knapp-primær" style="flex: 1;">Min Liga</button>
-            </div>
         </div>
       </div>
 
@@ -1437,10 +1437,10 @@ async function lastInnKamperForRunde() {
 
                   <div class="kamp-innhold" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 8px;">
                       
-                      <!-- Hjemmelag (Logo over navn, tekst høyrejustert eller sentrert) -->
-                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                    <!-- Hjemmelag (Trykkbar) -->
+                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="hentOgVisLagKamper('${kamp.hjemmelag?.id}', '${kamp.hjemmelag?.navn}')">
                           ${hjemmeLogoHtml}
-                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2;">${kamp.hjemmelag?.navn || ''}</span>
+                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2; text-decoration: underline;">${kamp.hjemmelag?.navn || ''}</span>
                       </div>
 
                       <!-- Inputfelt -->
@@ -1450,10 +1450,10 @@ async function lastInnKamperForRunde() {
                           <input class="borte-input" type="number" value="${tBorte !== undefined ? tBorte : ''}" placeholder="-" ${erLaast ? 'disabled' : ''} style="width: 40px; text-align: center; font-size: 1.1rem; padding: 6px;">
                       </div>
 
-                      <!-- Bortelag (Logo over navn, tekst venstrejustert eller sentrert) -->
-                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                      <!-- Bortelag (Trykkbar) -->
+                      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="hentOgVisLagKamper('${kamp.bortelag?.id}', '${kamp.bortelag?.navn}')">
                           ${borteLogoHtml}
-                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2;">${kamp.bortelag?.navn || ''}</span>
+                          <span style="font-weight: bold; font-size: 0.9rem; line-height: 1.2; text-decoration: underline;">${kamp.bortelag?.navn || ''}</span>
                       </div>
 
                   </div>
