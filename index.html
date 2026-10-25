@@ -1605,11 +1605,46 @@ async function lastInnKamperForRunde() {
         if (!modal) return;
 
         tittel.innerText = `Kamper for: ${lagNavn}`;
-        undertittel.innerText = `Oversikt over runder, motstandere og resultater.`;
+        undertittel.innerText = `Henter informasjon...`;
         innhold.innerHTML = `<p style="text-align: center; color: var(--dempet-tekst);">Henter kamper fra databasen...</p>`;
         modal.style.display = 'flex';
 
         try {
+            // 1. Regn ut tabellplassering basert på live-tabellen
+            const { data: lagListe } = await supabase.from('europa_lag').select('*');
+            const { data: offisiellTabell } = await supabase.from('offisiell_tabell').select('*');
+
+            const tabellMap = {};
+            if (offisiellTabell) {
+                offisiellTabell.forEach(rad => { tabellMap[rad.lag_id] = rad; });
+            }
+
+            const komplettTabell = (lagListe || []).map(lag => {
+                const stats = tabellMap[lag.id] || {};
+                return {
+                    lag_id: lag.id,
+                    navn: lag.navn,
+                    poeng: stats.poeng || 0,
+                    maal_for: stats.maal_for || 0,
+                    maal_imot: stats.maal_imot || 0
+                };
+            });
+
+            komplettTabell.sort((a, b) => {
+                if (a.poeng !== b.poeng) return b.poeng - a.poeng;
+                const mfA = a.maal_for - a.maal_imot;
+                const mfB = b.maal_for - b.maal_imot;
+                if (mfA !== mfB) return mfB - mfA;
+                if (a.maal_for !== b.maal_for) return b.maal_for - a.maal_for;
+                return a.navn.localeCompare(b.navn);
+            });
+
+            const tabellIndeks = komplettTabell.findIndex(l => l.lag_id == lagId);
+            const lagPlassering = tabellIndeks !== -1 ? tabellIndeks + 1 : '-';
+
+            undertittel.innerText = `Tabellplassering: ${lagPlassering}. plass | Oversikt over runder og resultater.`;
+
+            // 2. Hent kamper for laget
             const { data: kamper, error } = await supabase
                 .from('europa_kamper')
                 .select(`
@@ -1626,11 +1661,11 @@ async function lastInnKamperForRunde() {
             if (error) throw error;
 
             if (!kamper || kamper.length === 0) {
-                innhold.innerHTML = `<p style="color: var(--dempet-tekst); text-align: center;">Ingen kamper registrert for dette laget ennå.</p>`;
+                innhold.innerHTML += `<p style="color: var(--dempet-tekst); text-align: center; margin-top: 10px;">Ingen kamper registrert for dette laget ennå.</p>`;
                 return;
             }
 
-            let html = '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;">';
+            let html = '<div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; margin-top: 10px;">';
             kamper.forEach(k => {
                 const erHjemme = k.hjemmelag.id == lagId;
                 const motstander = erHjemme ? k.bortelag : k.hjemmelag;
